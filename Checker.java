@@ -49,8 +49,8 @@ public class Checker {
 		for (int i = 0; i < myBlocks.size(); i ++) {
 			Block currBlock = myBlocks.get(i); 
 			if (isBlocked(currBlock)) {
-				toBeReturned = 5;
-				System.out.println(toBeReturned);
+				toBeReturned = 5; //The board layout is impossible; 5 is returned.
+				System.out.println("ERROR");
 			} else {
 				putBlock(currBlock);
 			}
@@ -58,16 +58,16 @@ public class Checker {
 	}
 	
 	private void putBlock(Block block) {
-		for (int a = block.getBottomLeftRow(); a <= block.getTopLeftRow(); a++) {
-			for (int i = block.getTopLeftCol(); i <= block.getBottomLeftCol(); i++) {
+		for (int a = block.getTopLeftRow(); a <= block.getBottomRightRow(); a++) {
+			for (int i = block.getTopLeftCol(); i <= block.getBottomRightCol(); i++) {
 				myBoard[a][i] = true;
 			}
 		}
 	}
 	
 	private boolean isBlocked(Block block) {
-		for (int a = block.getBottomLeftRow(); a <= block.getTopLeftRow(); a++) {
-			for (int i = block.getTopLeftCol(); i <= block.getBottomLeftCol(); i++) {
+		for (int a = block.getBottomRightRow(); a <= block.getTopLeftRow(); a++) {
+			for (int i = block.getTopLeftCol(); i <= block.getBottomRightCol(); i++) {
 				if (myBoard[a][i] == true) {
 					return true;
 				}
@@ -78,7 +78,7 @@ public class Checker {
 	
 	private class Block {
 		private int[] topLeftCoor = new int[2];
-		private int[] bottomLeftCoor = new int[2];
+		private int[] bottomRightCoor = new int[2];
 		
 		public Block (ArrayList<Integer> myCoors) {
 			if (myCoors.size() != 4) {
@@ -86,8 +86,8 @@ public class Checker {
 			} else {
 				topLeftCoor[0] = myCoors.get(0);
 				topLeftCoor[1] = myCoors.get(1);
-				bottomLeftCoor[0] = myCoors.get(2);
-				bottomLeftCoor[1] = myCoors.get(3);
+				bottomRightCoor[0] = myCoors.get(2);
+				bottomRightCoor[1] = myCoors.get(3);
 			}
 		}
 		
@@ -99,12 +99,16 @@ public class Checker {
 			return topLeftCoor[1];
 		}
 		
-		public int getBottomLeftRow() {
-			return bottomLeftCoor[0];
+		public int getBottomRightRow() {
+			return bottomRightCoor[0];
 		}
 		
-		public int getBottomLeftCol() {
-			return bottomLeftCoor[1];
+		public int getBottomRightCol() {
+			return bottomRightCoor[1];
+		}
+		
+		public String toString() {
+			return topLeftCoor[0] + " " + topLeftCoor[1] + " " + bottomRightCoor[0] + " " + bottomRightCoor[1];
 		}
 	}
 	
@@ -112,9 +116,9 @@ public class Checker {
 		for (int i = 0; i < myBoard.length; i++) {
 			for (int a = 0; a < myBoard[i].length; a++) {
 				if (myBoard[i][a] == true) {
-					System.out.print("T ");
+					System.out.print(i + ":" + a + "/T ");
 				} else {
-					System.out.print("F ");
+					System.out.print(i + ":" +a + "/F ");
 				}
 			}
 			System.out.println();
