@@ -1,94 +1,257 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 
 
 public class Checker {
 	
-	private boolean[][] myBoard;
+	private Board myBoard;
 	private ArrayList<Block> myBlocks;
-	private int toBeReturned;
+	private int currentBlock = 1;
 	
-	public static void main(String[] args) throws FileNotFoundException {
-		Checker checker = new Checker(args[0]);
-		checker.printBoard();
-	}
-	
-	public Checker(String init) throws FileNotFoundException {
-		File initFile = new File(init);
-		myBlocks = new ArrayList<Block>();
-		Scanner s = new Scanner(initFile);
-		int i = 1;
-		ArrayList<Integer> boardNBlockHelper = new ArrayList<Integer>();
+	public static void main(String [] args) throws FileNotFoundException {
+		if (args.length != 2) {
+			System.exit(2);
+		}
+		Checker init = new Checker(args[0]);
+		init.printBoard();
+		Block goalBlock = new Checker().new Block(args[1]);
+		int[] oldSpot = new int[2];
+		int[] newSpot = new int[2];
+		Scanner s = new Scanner(System.in);
 		while (s.hasNext()) {
-			boardNBlockHelper.add(s.nextInt());
-			if (i == 2) {
-				createBoardSize(boardNBlockHelper.get(0), boardNBlockHelper.get(1));
-				boardNBlockHelper.clear();
+			try {
+				oldSpot[0] = s.nextInt();
+				oldSpot[1] = s.nextInt();
+				newSpot[0] = s.nextInt();
+				newSpot[1] = s.nextInt();
+				init.makeMove(oldSpot, newSpot);
+				init.printBoard();
 			}
-			else if ((i - 2) % 4 == 0) {
-				Block blockToAdd = new Block(boardNBlockHelper);
-				myBlocks.add(blockToAdd);
-				boardNBlockHelper.clear();
-			}
-			i++;
-		}
-		if (boardNBlockHelper.size() != 0) {
-			throw new IllegalArgumentException();
-		}
-		this.createBoard();
-	}
-	
-	private void createBoardSize(int height, int width) {
-		myBoard = new boolean[height][width];
-	}
-	
-	private void createBoard() {
-		for (int i = 0; i < myBlocks.size(); i ++) {
-			Block currBlock = myBlocks.get(i); 
-			if (isBlocked(currBlock)) {
-				toBeReturned = 5; //The board layout is impossible; 5 is returned.
-				System.out.println("ERROR");
-			} else {
-				putBlock(currBlock);
+			catch (NoSuchElementException e) {
+				System.exit(4);
 			}
 		}
 	}
 	
-	private void putBlock(Block block) {
-		for (int a = block.getTopLeftRow(); a <= block.getBottomRightRow(); a++) {
-			for (int i = block.getTopLeftCol(); i <= block.getBottomRightCol(); i++) {
-				myBoard[a][i] = true;
+	public Checker(String init) {
+		try {
+			File initFile = new File(init);
+			myBlocks = new ArrayList<Block>();
+			Scanner s = new Scanner(initFile);
+			int i = 1;
+			ArrayList<Integer> boardNBlockHelper = new ArrayList<Integer>();
+			while (s.hasNext()) {
+				boardNBlockHelper.add(s.nextInt());
+				if (i == 2) {
+					myBoard = new Board(boardNBlockHelper.get(0), boardNBlockHelper.get(1));
+					boardNBlockHelper.clear();
+				}
+				else if ((i - 2) % 4 == 0) {
+					Block blockToAdd = new Block(boardNBlockHelper);
+					myBlocks.add(blockToAdd);
+					boardNBlockHelper.clear();
+				}
+				i++;
 			}
+			if (boardNBlockHelper.size() != 0) {
+				System.exit(5);
+			}
+			myBoard.createBoard();
+		}
+		catch (FileNotFoundException e) {
+			System.exit(3);
 		}
 	}
 	
-	private boolean isBlocked(Block block) {
-		for (int a = block.getBottomRightRow(); a <= block.getTopLeftRow(); a++) {
-			for (int i = block.getTopLeftCol(); i <= block.getBottomRightCol(); i++) {
-				if (myBoard[a][i] == true) {
-					return true;
+	public Checker() {
+		myBoard = null;
+		myBlocks = null;
+		currentBlock = 0;
+	}
+
+	public void makeMove(int[] oldSpot, int[] newSpot) {
+		myBoard.makeMove(oldSpot, newSpot);
+	}
+	
+	public void printBoard() {
+		myBoard.printBoard();
+	}
+	
+	public Block getBlock(int[] topLeft) {
+		return myBoard.getBlock(topLeft);
+	}
+	
+	private class Board {
+		int[][] board;
+		int myHeight;
+		int myWidth;
+		ArrayList<Block> blocks;
+		
+		public Board(int height,int width) {
+			blocks = new ArrayList<Block>();
+			myHeight = height;
+			myWidth = width;
+			board = new int[height][width];
+		}
+		
+		public Block getBlock(int[] topLeft) {
+			for (int i = 0; i < blocks.size(); i++) {
+				Block currBlock = blocks.get(i);
+				if (topLeft[0] == currBlock.getTopLeftRow() && topLeft[1] == currBlock.getTopLeftCol()) {
+					return currBlock;
+				}
+			}
+			return null;
+		}
+		
+		private void createBoard() {
+			for (int i = 0; i < myBlocks.size(); i ++) {
+				Block currBlock = myBlocks.get(i);
+				if (isBlocked(currBlock)) {
+					System.exit(5);
+				} else {
+					putBlock(currBlock);
 				}
 			}
 		}
-		return false;
+		
+		private boolean isBlocked(Block block) {
+			for (int a = block.getBottomRightRow(); a <= block.getTopLeftRow(); a++) {
+				for (int i = block.getTopLeftCol(); i <= block.getBottomRightCol(); i++) {
+					if (board[a][i] != 0) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		
+		private void putBlock(Block block) {
+			if (isBlocked(block)) {
+				System.exit(6);
+			} else {
+				for (int a = block.getTopLeftRow(); a <= block.getBottomRightRow(); a++) {
+					for (int i = block.getTopLeftCol(); i <= block.getBottomRightCol(); i++) {
+						if (a >= myHeight || i > myWidth) {
+							System.exit(6);
+						} else {
+							board[a][i] = block.getBlock();
+						}
+					}
+				}
+			}
+			blocks.add(block);
+		}
+		
+		private void removeBlock(Block block) {
+			int blockIndicator = block.getBlock();
+			for (int i = 0; i < myHeight; i++) {
+				for (int a = 0; a < myWidth; a++) {
+					if (board[i][a] == blockIndicator) {
+						board[i][a] = 0;
+					}
+				}
+			}
+			blocks.remove(block);
+		}
+		
+		private void makeMove(int[] oldSpot, int[] newSpot) {
+			int blockIndicator = board[oldSpot[0]][oldSpot[1]];
+			Block toBeRemoved = null;
+			Block toBeAdded;
+			ArrayList<Integer> toBeAddedCoors = new ArrayList<Integer>();
+			toBeAddedCoors.add(newSpot[0]);
+			toBeAddedCoors.add(newSpot[1]);
+			for (int i = 0; i < blocks.size(); i++) {
+				Block currBlock = blocks.get(i);
+				if (currBlock.getTopLeftRow() == oldSpot[0] && currBlock.getTopLeftCol() == oldSpot[1]) {
+					toBeRemoved = currBlock;
+				}
+			}
+			System.out.println(toBeRemoved.dimension[0]);
+			toBeAddedCoors.add(newSpot[0] + toBeRemoved.dimension[0] - 1);
+			System.out.println(toBeRemoved.dimension[1]);
+			toBeAddedCoors.add(newSpot[1] +toBeRemoved.dimension[1] - 1);
+			toBeAdded = new Block(toBeAddedCoors, blockIndicator);
+			this.removeBlock(toBeRemoved);
+			this.putBlock(toBeAdded);
+		}
+		
+		
+		public void printBoard() {
+			for (int i = 0; i < myHeight; i++) {
+				for (int a = 0; a < myWidth; a++) {
+					int myBlock = board[i][a];
+					System.out.print(myBlock + " ");
+				}
+				System.out.println();
+			}
+		}
 	}
 	
-	private class Block {
+	public class Block {
 		private int[] topLeftCoor = new int[2];
 		private int[] bottomRightCoor = new int[2];
+		private int blockIndicator; //number that helps distinct one block from another.
+		private int[] dimension = new int[2];
+		
+		public Block(String file) throws FileNotFoundException {
+			File myCoorsFile = new File(file);
+			Scanner nextCoor = new Scanner(myCoorsFile);
+			ArrayList<Integer> myCoors = new ArrayList<Integer>();
+			while (nextCoor.hasNext()) {
+				myCoors.add(nextCoor.nextInt());
+			}
+			if (myCoors.size() != 4) {
+				System.exit(5);
+			}
+			Block newBlock = new Block(myCoors);
+			topLeftCoor = newBlock.topLeftCoor;
+			bottomRightCoor = newBlock.bottomRightCoor;
+			blockIndicator = newBlock.blockIndicator;
+			dimension = newBlock.dimension;
+		}
 		
 		public Block (ArrayList<Integer> myCoors) {
+			blockIndicator = currentBlock;
+			currentBlock++;
 			if (myCoors.size() != 4) {
-				throw new IllegalArgumentException();
+				System.exit(5);
 			} else {
 				topLeftCoor[0] = myCoors.get(0);
 				topLeftCoor[1] = myCoors.get(1);
 				bottomRightCoor[0] = myCoors.get(2);
 				bottomRightCoor[1] = myCoors.get(3);
+				makeDimension(myCoors);
 			}
+		}
+		
+		public Block (ArrayList<Integer> myCoors, int myBlockInd) {
+			System.out.println(myCoors.toString());
+			blockIndicator = myBlockInd;
+			if (myCoors.size() != 4) {
+				System.exit(5);
+			} else {
+				topLeftCoor[0] = myCoors.get(0);
+				topLeftCoor[1] = myCoors.get(1);
+				bottomRightCoor[0] = myCoors.get(2);
+				bottomRightCoor[1] = myCoors.get(3);
+				makeDimension(myCoors);
+			}
+		}
+		
+		public void makeDimension(ArrayList<Integer> myCoors) {
+			dimension[0] = myCoors.get(2) - myCoors.get(0) + 1;
+			dimension[1] = myCoors.get(3) - myCoors.get(1) + 1;
+		}
+		
+		public int getBlock() {
+			return blockIndicator;
 		}
 		
 		public int getTopLeftRow() {
@@ -107,22 +270,20 @@ public class Checker {
 			return bottomRightCoor[1];
 		}
 		
+		public int[] getDimension() {
+			return dimension;
+		}
+		
+		public boolean equals(Block other) {
+			return this.dimension.equals(other.dimension) &&
+				   (this.getTopLeftRow() == other.getTopLeftRow()) &&
+				   (this.getTopLeftCol() == other.getTopLeftCol()) &&
+				   (this.getBottomRightRow() == other.getBottomRightRow()) &&
+				   (this.getBottomRightCol() == other.getBottomRightCol());		   
+		}
+		
 		public String toString() {
 			return topLeftCoor[0] + " " + topLeftCoor[1] + " " + bottomRightCoor[0] + " " + bottomRightCoor[1];
 		}
 	}
-	
-	public void printBoard() {
-		for (int i = 0; i < myBoard.length; i++) {
-			for (int a = 0; a < myBoard[i].length; a++) {
-				if (myBoard[i][a] == true) {
-					System.out.print(i + ":" + a + "/T ");
-				} else {
-					System.out.print(i + ":" +a + "/F ");
-				}
-			}
-			System.out.println();
-		}
-	}
-
 }
