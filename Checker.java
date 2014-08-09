@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
@@ -15,11 +16,12 @@ public class Checker {
 	
 	public static void main(String [] args) throws FileNotFoundException {
 		if (args.length != 2) {
+			System.out.println(2);
 			System.exit(2);
 		}
 		Checker init = new Checker(args[0]);
 		init.printBoard();
-		Block goalBlock = new Checker().new Block(args[1]);
+		ArrayList<Block> goalBlocks = init.makeGoalBlocks(args[1]);
 		int[] oldSpot = new int[2];
 		int[] newSpot = new int[2];
 		Scanner s = new Scanner(System.in);
@@ -33,9 +35,11 @@ public class Checker {
 				init.printBoard();
 			}
 			catch (NoSuchElementException e) {
+				System.out.println(4);
 				System.exit(4);
 			}
 		}
+		init.CheckGoal(goalBlocks);
 	}
 	
 	public Checker(String init) {
@@ -59,11 +63,13 @@ public class Checker {
 				i++;
 			}
 			if (boardNBlockHelper.size() != 0) {
+				System.out.println(5);
 				System.exit(5);
 			}
 			myBoard.createBoard();
 		}
 		catch (FileNotFoundException e) {
+			System.out.println(3);
 			System.exit(3);
 		}
 	}
@@ -75,15 +81,66 @@ public class Checker {
 	}
 
 	public void makeMove(int[] oldSpot, int[] newSpot) {
+		if (Math.abs(oldSpot[0] + oldSpot[1] - newSpot[0] - newSpot[1]) > 1) {
+			System.out.println(6);
+			System.exit(6);
+		}
 		myBoard.makeMove(oldSpot, newSpot);
-	}
-	
-	public void printBoard() {
-		myBoard.printBoard();
 	}
 	
 	public Block getBlock(int[] topLeft) {
 		return myBoard.getBlock(topLeft);
+	}
+	
+	public ArrayList<Block> makeGoalBlocks(String goalFile) {
+		ArrayList<Block> rtnBlocks = new ArrayList<Block>();
+		try {
+			File goalBlocks = new File(goalFile);
+			Scanner gBlocks = new Scanner(goalBlocks);
+			try {
+				ArrayList<Integer> myCoors = new ArrayList<Integer>();
+				while (gBlocks.hasNext()) {
+					myCoors.add(gBlocks.nextInt());
+					myCoors.add(gBlocks.nextInt());
+					myCoors.add(gBlocks.nextInt());
+					myCoors.add(gBlocks.nextInt());
+					rtnBlocks.add(new Block(myCoors));
+					myCoors.clear();
+				}
+			} catch (NoSuchElementException e) {
+				System.out.println(5);
+				System.exit(5);
+			}
+		}
+		catch (FileNotFoundException e) {
+			System.out.println(3);
+			System.exit(3);
+		}
+		return rtnBlocks;
+	}
+	
+	public void CheckGoal(ArrayList<Block> gBlocks) {
+		int blocksMatchedSoFar = 0;
+		ArrayList<Block> myBlocks = myBoard.blocks;
+		for (Block b: gBlocks) {
+			for (Block checker: myBlocks) {
+				if (checker.equals(b)) {
+					blocksMatchedSoFar++;
+					break;
+				}
+			}
+		}
+		if (gBlocks.size() == blocksMatchedSoFar) {
+			System.out.println(0);
+			System.exit(0);
+		} else {
+			System.out.println(1);
+			System.exit(1);
+		}
+	}
+	
+	public void printBoard() {
+		myBoard.printBoard();
 	}
 	
 	private class Board {
@@ -113,6 +170,7 @@ public class Checker {
 			for (int i = 0; i < myBlocks.size(); i ++) {
 				Block currBlock = myBlocks.get(i);
 				if (isBlocked(currBlock)) {
+					System.out.println(5);
 					System.exit(5);
 				} else {
 					putBlock(currBlock);
@@ -133,6 +191,7 @@ public class Checker {
 		
 		private void putBlock(Block block) {
 			if (isBlocked(block)) {
+				System.out.println(6);
 				System.exit(6);
 			} else {
 				for (int a = block.getTopLeftRow(); a <= block.getBottomRightRow(); a++) {
@@ -161,7 +220,16 @@ public class Checker {
 		}
 		
 		private void makeMove(int[] oldSpot, int[] newSpot) {
+			if (oldSpot[0] > myHeight - 1 || newSpot[0] > myHeight - 1 ||
+				oldSpot[1] > myWidth - 1 || newSpot[1] > myWidth - 1) {
+				System.out.println(6);
+				System.exit(6);
+			}
 			int blockIndicator = board[oldSpot[0]][oldSpot[1]];
+			if (blockIndicator == 0) {
+				System.out.println(6);
+				System.exit(6);
+			}
 			Block toBeRemoved = null;
 			Block toBeAdded;
 			ArrayList<Integer> toBeAddedCoors = new ArrayList<Integer>();
@@ -173,9 +241,7 @@ public class Checker {
 					toBeRemoved = currBlock;
 				}
 			}
-			System.out.println(toBeRemoved.dimension[0]);
 			toBeAddedCoors.add(newSpot[0] + toBeRemoved.dimension[0] - 1);
-			System.out.println(toBeRemoved.dimension[1]);
 			toBeAddedCoors.add(newSpot[1] +toBeRemoved.dimension[1] - 1);
 			toBeAdded = new Block(toBeAddedCoors, blockIndicator);
 			this.removeBlock(toBeRemoved);
@@ -200,27 +266,11 @@ public class Checker {
 		private int blockIndicator; //number that helps distinct one block from another.
 		private int[] dimension = new int[2];
 		
-		public Block(String file) throws FileNotFoundException {
-			File myCoorsFile = new File(file);
-			Scanner nextCoor = new Scanner(myCoorsFile);
-			ArrayList<Integer> myCoors = new ArrayList<Integer>();
-			while (nextCoor.hasNext()) {
-				myCoors.add(nextCoor.nextInt());
-			}
-			if (myCoors.size() != 4) {
-				System.exit(5);
-			}
-			Block newBlock = new Block(myCoors);
-			topLeftCoor = newBlock.topLeftCoor;
-			bottomRightCoor = newBlock.bottomRightCoor;
-			blockIndicator = newBlock.blockIndicator;
-			dimension = newBlock.dimension;
-		}
-		
 		public Block (ArrayList<Integer> myCoors) {
 			blockIndicator = currentBlock;
 			currentBlock++;
 			if (myCoors.size() != 4) {
+				System.out.println(5);
 				System.exit(5);
 			} else {
 				topLeftCoor[0] = myCoors.get(0);
@@ -235,6 +285,7 @@ public class Checker {
 			System.out.println(myCoors.toString());
 			blockIndicator = myBlockInd;
 			if (myCoors.size() != 4) {
+				System.out.println(5);
 				System.exit(5);
 			} else {
 				topLeftCoor[0] = myCoors.get(0);
@@ -275,7 +326,8 @@ public class Checker {
 		}
 		
 		public boolean equals(Block other) {
-			return this.dimension.equals(other.dimension) &&
+			return (this.dimension[0] == other.dimension[0]) &&
+				   (this.dimension[1] == other.dimension[1]) &&
 				   (this.getTopLeftRow() == other.getTopLeftRow()) &&
 				   (this.getTopLeftCol() == other.getTopLeftCol()) &&
 				   (this.getBottomRightRow() == other.getBottomRightRow()) &&
