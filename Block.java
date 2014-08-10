@@ -12,16 +12,13 @@ public class Block {
 	public Block (ArrayList<Integer> myCoors, int myBlockInd) {
 		System.out.println(myCoors.toString());
 		blockIndicator = myBlockInd;
-		if (myCoors.size() != 4) {
-			System.out.println(5);
-			System.exit(5);
-		} else {
+		
 			topLeftCoor[0] = myCoors.get(0);
 			topLeftCoor[1] = myCoors.get(1);
 			bottomRightCoor[0] = myCoors.get(2);
 			bottomRightCoor[1] = myCoors.get(3);
 			makeDimension(myCoors);
-		}
+		
 	}
 	
 	public void makeDimension(ArrayList<Integer> myCoors) {
