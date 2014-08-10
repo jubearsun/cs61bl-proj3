@@ -103,9 +103,15 @@ public class Board {
 		}
 		toBeAddedCoors.add(newSpot[0] + toBeRemoved.getDimension()[0] - 1);
 		toBeAddedCoors.add(newSpot[1] +toBeRemoved.getDimension()[1] - 1);
-		toBeAdded = new Block(toBeAddedCoors, blockIndicator);
-		this.removeBlock(toBeRemoved);
-		this.putBlock(toBeAdded);
+		if (toBeAddedCoors.size() != 4) {
+			System.out.println(5);
+			System.exit(5);
+		}
+		else {
+			toBeAdded = new Block(toBeAddedCoors, blockIndicator);
+			this.removeBlock(toBeRemoved);
+			this.putBlock(toBeAdded);
+		}
 	}
 	
 	
