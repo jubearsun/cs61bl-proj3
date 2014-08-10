@@ -259,10 +259,16 @@ public class Checker {
 			}
 		}
 		
-		private boolean isLegalMove(int[] oldSpot, int[] newSpot) { //Needs work. Does not handle all cases currently
-			return !((oldSpot[0] > myHeight - 1 || newSpot[0] > myHeight - 1 ||
-					oldSpot[1] > myWidth - 1 || newSpot[1] > myWidth - 1) || board[oldSpot[0]][oldSpot[1]] == 0 ||
-					board[newSpot[0]][newSpot[1]] != 0);
+		private boolean isLegalMove(Block old, int[] newSpot) {
+			int newRightCornerRow = old.getBottomRightRow() + (newSpot[0]-old.getTopLeftRow());
+			int newRightCornerCol = old.getBottomRightCol() + (newSpot[1]-old.getTopLeftCol());
+			return !((old.getTopLeftRow() > myHeight - 1 || newSpot[0] > myHeight - 1 ||
+					old.getTopLeftCol() > myWidth - 1 || newSpot[1] > myWidth - 1) || 
+					board[old.getTopLeftRow()][old.getTopLeftCol()] == 0 ||
+					board[newSpot[0]][newSpot[1]] != 0 && 
+					(board[newRightCornerRow][newRightCornerCol] != 0 ||
+					board[newRightCornerRow][newRightCornerCol] != old.blockIndicator)
+					);
 		}
 		
 		public ArrayList<Board> generateMoves() {
