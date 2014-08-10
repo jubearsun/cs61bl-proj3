@@ -265,10 +265,10 @@ public class Checker {
 			return !((old.getTopLeftRow() > myHeight - 1 || newSpot[0] > myHeight - 1 ||
 					old.getTopLeftCol() > myWidth - 1 || newSpot[1] > myWidth - 1) || 
 					board[old.getTopLeftRow()][old.getTopLeftCol()] == 0 ||
-					board[newSpot[0]][newSpot[1]] != 0 && 
+					(board[newSpot[0]][newSpot[1]] != 0 && 
 					(board[newRightCornerRow][newRightCornerCol] != 0 ||
 					board[newRightCornerRow][newRightCornerCol] != old.blockIndicator)
-					);
+					));
 		}
 		
 		public ArrayList<Board> generateMoves() {
