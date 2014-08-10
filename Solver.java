@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.PriorityQueue;
 import java.util.Set;
 
@@ -22,14 +23,14 @@ public class Solver {
 		ArrayList<Checker.Board> rtn = new ArrayList<Checker.Board>(); //data structure is probably going to change
 		
 		navigableBoards.add(initial);
-		while (!navigableBoards.isEmpty()) {
-			currBoard = rtn.get(0);
+		Iterator<Checker.Board> navIterator = navigableBoards.iterator();
+		while (navIterator.hasNext()) {
+			currBoard = navIterator.next();
 			if (currBoard.equals(goal)) { //need to define a .equals method
 				return rtn;
 			}
 			navigableBoards.remove(currBoard);
 			visitedBoards.add(currBoard);
-			
 			for (Checker.Board move : currBoard.generateMoves()) {
 				if (visitedBoards.contains(move)) {
 					continue;
