@@ -108,14 +108,20 @@ public class Checker {
 			Scanner gBlocks = new Scanner(goalBlocks);
 			try {
 				ArrayList<Integer> myCoors = new ArrayList<Integer>();
-				while (gBlocks.hasNext()) {
-					myCoors.add(gBlocks.nextInt());
-					myCoors.add(gBlocks.nextInt());
-					myCoors.add(gBlocks.nextInt());
-					myCoors.add(gBlocks.nextInt());
-					rtnBlocks.add(new Block(myCoors, currentBlock));
-					currentBlock++;
-					myCoors.clear();
+				if (myCoors.size() != 4) {
+					System.out.println(5);
+					System.exit(5);
+				}
+				else {
+					while (gBlocks.hasNext()) {
+						myCoors.add(gBlocks.nextInt());
+						myCoors.add(gBlocks.nextInt());
+						myCoors.add(gBlocks.nextInt());
+						myCoors.add(gBlocks.nextInt());
+						rtnBlocks.add(new Block(myCoors, currentBlock));
+						currentBlock++;
+						myCoors.clear();
+					}
 				}
 			} catch (NoSuchElementException e) {
 				System.out.println(5);
