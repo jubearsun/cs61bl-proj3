@@ -281,7 +281,8 @@ public class Checker {
 				if (isBlocked(block)) {
 					continue;
 				} else {
-					int[]toMove = block.topLeftCoor;
+					Block curr = block;
+					int[] toMove = block.topLeftCoor;
 					int[] right = new int[2];
 					right[0] = toMove[0];
 					right[1] = toMove[1] + 1;
@@ -295,16 +296,16 @@ public class Checker {
 					right[0] = toMove[0] + 1;
 					right[1] = toMove[1];
 					
-					if (isLegalMove(toMove, right)) {
+					if (isLegalMove(curr, right)) {
 						moveRight.makeMove(toMove, right);
 						results.add(moveRight);
-					} else if (isLegalMove(toMove, left)) {
+					} else if (isLegalMove(curr, left)) {
 						moveLeft.makeMove(toMove, left);
 						results.add(moveLeft);
-					} else if (isLegalMove(toMove, up)) {
+					} else if (isLegalMove(curr, up)) {
 						moveUp.makeMove(toMove, up);
 						results.add(moveUp);
-					} else if (isLegalMove(toMove, down)) {
+					} else if (isLegalMove(curr, down)) {
 						moveDown.makeMove(toMove, down);
 						results.add(moveDown);
 					}					
