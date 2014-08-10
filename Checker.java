@@ -58,10 +58,16 @@ public class Checker {
 					boardNBlockHelper.clear();
 				}
 				else if ((i - 2) % 4 == 0) {
-					Block blockToAdd = new Block(boardNBlockHelper, currentBlock);
-					currentBlock++;
-					myBlocks.add(blockToAdd);
-					boardNBlockHelper.clear();
+					if (boardNBlockHelper.size() != 4) {
+						System.out.println(5);
+						System.exit(5);
+					}
+					else {
+						Block blockToAdd = new Block(boardNBlockHelper, currentBlock);
+						currentBlock++;
+						myBlocks.add(blockToAdd);
+						boardNBlockHelper.clear();
+					}
 				}
 				i++;
 			}
