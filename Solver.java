@@ -48,12 +48,12 @@ public class Solver {
 		return rtn;
 	}
 	
-	public String getMove(Checker.Board before, Checker.Board after) {
+	public String getMove(Board before, Board after) {
 
 		StringBuilder move = new StringBuilder();
 		mainLoop:
-		for (Checker.Block a : before.getBlocks()) {
-			for (Checker.Block b : after.getBlocks()) {
+		for (Block a : before.getBlocks()) {
+			for (Block b : after.getBlocks()) {
 				if (!a.equals(b) && (a.getBlock() == b.getBlock())) {
 					move.append(a.getTopLeftCol());
 					move.append(a.getTopLeftRow());
