@@ -258,6 +258,54 @@ public class Checker {
 				System.out.println();
 			}
 		}
+		
+		private boolean isLegalMove(int[] oldSpot, int[] newSpot) { //Needs work. Does not handle all cases currently
+			return !((oldSpot[0] > myHeight - 1 || newSpot[0] > myHeight - 1 ||
+					oldSpot[1] > myWidth - 1 || newSpot[1] > myWidth - 1) || board[oldSpot[0]][oldSpot[1]] == 0 ||
+					board[newSpot[0]][newSpot[1]] != 0);
+		}
+		
+		public ArrayList<Board> generateMoves() {
+			ArrayList<Board> results = new ArrayList<Board>();
+			Board moveRight = this;
+			Board moveLeft = this;
+			Board moveUp = this;
+			Board moveDown = this;
+			for (Block block : this.blocks) {
+				if (isBlocked(block)) {
+					continue;
+				} else {
+					int[]toMove = block.topLeftCoor;
+					int[] right = new int[2];
+					right[0] = toMove[0];
+					right[1] = toMove[1] + 1;
+					int[] left = new int[2];
+					left[0] = toMove[0];
+					left[1] = toMove[1] - 1;
+					int[] up = new int[2];
+					right[0] = toMove[0] - 1;
+					right[1] = toMove[1];
+					int[] down = new int[2];
+					right[0] = toMove[0] + 1;
+					right[1] = toMove[1];
+					
+					if (isLegalMove(toMove, right)) {
+						moveRight.makeMove(toMove, right);
+						results.add(moveRight);
+					} else if (isLegalMove(toMove, left)) {
+						moveLeft.makeMove(toMove, left);
+						results.add(moveLeft);
+					} else if (isLegalMove(toMove, up)) {
+						moveUp.makeMove(toMove, up);
+						results.add(moveUp);
+					} else if (isLegalMove(toMove, down)) {
+						moveDown.makeMove(toMove, down);
+						results.add(moveDown);
+					}					
+				}
+			}
+			return results;
+		}
 	}
 	
 	public class Block {
