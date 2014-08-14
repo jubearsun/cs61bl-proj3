@@ -1,7 +1,11 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
+import java.util.Scanner;
 import java.util.Set;
 
 
@@ -12,10 +16,52 @@ public class Solver {
 	//Going to try to implement A* search
 	//http://www.policyalmanac.org/games/aStarTutorial.htm
 
-	Set<Board> navigableBoards = new HashSet<Board>();
-	Set<Board> visitedBoards = new HashSet<Board>();
+	private Set<Board> navigableBoards = new HashSet<Board>();
+	private Set<Board> visitedBoards = new HashSet<Board>();
 	
+	// used to initialize board, same as Checker
+	private Board myBoard;
+	private ArrayList<Block> myBlocks;
+	private int currentBlock = 1; 
 	
+	public Solver(String init) {
+		try {
+			File initFile = new File(init);
+			myBlocks = new ArrayList<Block>();
+			Scanner s = new Scanner(initFile);
+			int i = 1;
+			ArrayList<Integer> boardNBlockHelper = new ArrayList<Integer>();
+			while (s.hasNext()) {
+				boardNBlockHelper.add(s.nextInt());
+				if (i == 2) {
+					myBoard = new Board(boardNBlockHelper.get(0), boardNBlockHelper.get(1));
+					boardNBlockHelper.clear();
+				}
+				else if ((i - 2) % 4 == 0) {
+					if (boardNBlockHelper.size() != 4) {
+						System.out.println(4);
+						System.exit(4);
+					}
+					else {
+						Block blockToAdd = new Block(boardNBlockHelper, currentBlock);
+						currentBlock++;
+						myBlocks.add(blockToAdd);
+						boardNBlockHelper.clear();
+					}
+				}
+				i++;
+			}
+			if (boardNBlockHelper.size() != 0) {
+				System.out.println(4);
+				System.exit(4);
+			}
+			myBoard.createBoard(); // change to take in myBlocks as an input
+		}
+		catch (FileNotFoundException e) {
+			System.out.println(3);
+			System.exit(3);
+		}
+	}
 	
 	public ArrayList<Board> toGoal(Board initial, Board goal) { //return type is not set yet; still debating on best data structure
 		Board currBoard = null;
@@ -53,8 +99,8 @@ public class Solver {
 
 		StringBuilder move = new StringBuilder();
 		mainLoop:
-		for (Checker.Block a : before.getBlocks()) {
-			for (Checker.Block b : after.getBlocks()) {
+		for (Block a : before.getBlocks()) {
+			for (Block b : after.getBlocks()) {
 				if (!a.equals(b) && (a.getBlock() == b.getBlock())) {
 					move.append(a.getTopLeftCol());
 					move.append(a.getTopLeftRow());
