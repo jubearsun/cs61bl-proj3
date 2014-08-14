@@ -75,7 +75,7 @@ public class Checker {
 				System.out.println(5);
 				System.exit(5);
 			}
-			myBoard.createBoard();
+			myBoard.createBoard(myBlocks);
 		}
 		catch (FileNotFoundException e) {
 			System.out.println(3);
