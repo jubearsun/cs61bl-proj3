@@ -55,7 +55,7 @@ public class Solver {
 				System.out.println(4);
 				System.exit(4);
 			}
-			myBoard.createBoard(); // change to take in myBlocks as an input
+			myBoard.createBoard(myBlocks);
 		}
 		catch (FileNotFoundException e) {
 			System.out.println(3);
