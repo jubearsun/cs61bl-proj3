@@ -26,7 +26,7 @@ public class Board {
 		return null;
 	}
 	
-	public void createBoard() { // this was changed from private
+	public void createBoard(ArrayList<Block> myBlocks) { 
 		for (int i = 0; i < myBlocks.size(); i ++) {
 			Block currBlock = myBlocks.get(i);
 			if (isBlocked(currBlock)) {
