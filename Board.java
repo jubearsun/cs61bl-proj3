@@ -131,25 +131,34 @@ public class Board {
 	private boolean isLegalMove(Block old, int[] newSpot) {
 		int newRightCornerRow = old.getBottomRightRow() + (newSpot[0]-old.getTopLeftRow());
 		int newRightCornerCol = old.getBottomRightCol() + (newSpot[1]-old.getTopLeftCol());
-		return !((old.getTopLeftRow() > myHeight - 1 || newSpot[0] > myHeight - 1 ||
+		try {
+			boolean legality = !((old.getTopLeftRow() > myHeight - 1 || newSpot[0] > myHeight - 1 ||
 				old.getTopLeftCol() > myWidth - 1 || newSpot[1] > myWidth - 1) || 
 				board[old.getTopLeftRow()][old.getTopLeftCol()] == 0 ||
 				(board[newSpot[0]][newSpot[1]] != 0 && 
 				(board[newRightCornerRow][newRightCornerCol] != 0 ||
 				board[newRightCornerRow][newRightCornerCol] != old.getBlockIndicator())
 				));
+			return legality;
+		} catch (ArrayIndexOutOfBoundsException e){
+			return false;
+		}
 	}
 	
 	public ArrayList<Board> generateMoves() {
 		ArrayList<Board> results = new ArrayList<Board>();
-		Board moveRight = this;
-		Board moveLeft = this;
-		Board moveUp = this;
-		Board moveDown = this;
+		Board moveRight = new Board(myHeight, myWidth);
+		moveRight.createBoard(blocks, 4);
+		Board moveLeft = new Board(myHeight, myWidth);
+		moveLeft.createBoard(blocks, 4);
+		Board moveUp = new Board(myHeight, myWidth);
+		moveUp.createBoard(blocks, 4);
+		Board moveDown =new Board(myHeight, myWidth);
+		moveDown.createBoard(blocks, 4);
 		for (Block block : this.blocks) {
-			if (isBlocked(block)) {
-				continue;
-			} else {
+			//if (isBlocked(block)) { //isBlocked may need work
+			//	continue;
+			//} else {
 				Block curr = block;
 				int[] toMove = block.getTopLeftCoor();
 				int[] right = new int[2];
@@ -159,31 +168,36 @@ public class Board {
 				left[0] = toMove[0];
 				left[1] = toMove[1] - 1;
 				int[] up = new int[2];
-				right[0] = toMove[0] - 1;
-				right[1] = toMove[1];
+				up[0] = toMove[0] - 1;
+				up[1] = toMove[1];
 				int[] down = new int[2];
-				right[0] = toMove[0] + 1;
-				right[1] = toMove[1];
+				down[0] = toMove[0] + 1;
+				down[1] = toMove[1];
 				
 				if (isLegalMove(curr, right)) {
 					moveRight.makeMove(toMove, right);
 					results.add(moveRight);
-				} else if (isLegalMove(curr, left)) {
+				} 
+				if (isLegalMove(curr, left)) {
 					moveLeft.makeMove(toMove, left);
 					results.add(moveLeft);
-				} else if (isLegalMove(curr, up)) {
+				} 
+				if (isLegalMove(curr, up)) {
 					moveUp.makeMove(toMove, up);
 					results.add(moveUp);
-				} else if (isLegalMove(curr, down)) {
+				}
+				if (isLegalMove(curr, down)) {
 					moveDown.makeMove(toMove, down);
 					results.add(moveDown);
 				}					
 			}
-		}
+		//}
 		return results;
 	}
 	
-	public boolean equals(Board other) {
+	@Override
+	public boolean equals(Object otherBoard) {
+		Board other = (Board) otherBoard;
 		if (this.getBlocks().size() != other.getBlocks().size()) {
 			return false;
 		}
