@@ -62,7 +62,7 @@ public class Solver {
 				System.out.println(4);
 				System.exit(4);
 			}
-			myBoard.createBoard(myBlocks);
+			myBoard.createBoard(myBlocks, 4);
 		}
 		catch (FileNotFoundException e) {
 			System.out.println(3);
