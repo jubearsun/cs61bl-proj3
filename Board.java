@@ -1,5 +1,3 @@
-
-
 import java.util.ArrayList;
 
 public class Board {
@@ -29,7 +27,7 @@ public class Board {
 		for (int i = 0; i < myBlocks.size(); i ++) {
 			Block currBlock = myBlocks.get(i);
 			if (isBlocked(currBlock)) {
-				System.out.println(print);
+				System.out.println("unable to make board due to invalid format");
 				System.exit(print);
 			} else {
 				putBlock(currBlock);
@@ -50,12 +48,13 @@ public class Board {
 	
 	private void putBlock(Block block) {
 		if (isBlocked(block)) {
-			System.out.println(6);
+			System.out.println("impossible move, blocked by another block");
 			System.exit(6);
 		} else {
 			for (int a = block.getTopLeftRow(); a <= block.getBottomRightRow(); a++) {
 				for (int i = block.getTopLeftCol(); i <= block.getBottomRightCol(); i++) {
 					if (a >= myHeight || i > myWidth) {
+						System.out.println("move is out of bound");
 						System.exit(6);
 					} else {
 						board[a][i] = block.getBlock();
@@ -81,12 +80,12 @@ public class Board {
 	public void makeMove(int[] oldSpot, int[] newSpot) { // changed from private to public
 		if (oldSpot[0] > myHeight - 1 || newSpot[0] > myHeight - 1 ||
 			oldSpot[1] > myWidth - 1 || newSpot[1] > myWidth - 1) {
-			System.out.println(6);
+			System.out.println("move is out of bound");
 			System.exit(6);
 		}
 		int blockIndicator = board[oldSpot[0]][oldSpot[1]];
 		if (blockIndicator == 0) {
-			System.out.println(6);
+			System.out.println("invalid input, unable to make move");
 			System.exit(6);
 		}
 		Block toBeRemoved = null;
@@ -103,7 +102,7 @@ public class Board {
 		toBeAddedCoors.add(newSpot[0] + toBeRemoved.getDimension()[0] - 1);
 		toBeAddedCoors.add(newSpot[1] +toBeRemoved.getDimension()[1] - 1);
 		if (toBeAddedCoors.size() != 4) {
-			System.out.println(5);
+			System.out.println("input is incorrectly formatted");
 			System.exit(5);
 		}
 		else {
