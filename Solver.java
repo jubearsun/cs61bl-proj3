@@ -7,13 +7,14 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.Stack;
 
 
 public class Solver {
 	
 	private HashMap<Board, Board> boardMap = new HashMap<Board, Board>();
-	private Set<Board> navigableBoards = new HashSet<Board>();
-	private Set<Board> visitedBoards = new HashSet<Board>();
+	private Stack<Board> navigableBoards = new Stack<Board>();
+	private ArrayList<Board> visitedBoards = new ArrayList<Board>();
 	
 	// used to initialize board, same as Checker
 	private Board myBoard;
@@ -72,25 +73,35 @@ public class Solver {
 	
 	public LinkedList<Board> toGoal(Board initial, Board goal) { 
 		Board currBoard = null;
-				
-		navigableBoards.add(initial);
-		Iterator<Board> navIterator = navigableBoards.iterator();
-		while (navIterator.hasNext()) {
-			currBoard = navIterator.next();
-			if (currBoard.equals(goal)) { 
+		
+		navigableBoards.push(initial);
+		visitedBoards.add(initial);
+		//ListIterator<Board> navIterator = navigableBoards.listIterator();
+		while (!navigableBoards.isEmpty()) {
+			currBoard = navigableBoards.pop();
+			//System.out.println("currBoard " + currBoard);
+			if (currBoard.equals(goal)) {
 				return buildPath(currBoard);
 			}
-			navigableBoards.remove(currBoard);
+			//navIterator.remove();
+			//navigableBoards.remove(currBoard);
 			visitedBoards.add(currBoard);
 			for (Board move : currBoard.generateMoves()) {
+				//System.out.println("move " + move);
 				if (visitedBoards.contains(move)) {
 					continue;
-				}
-				if (!navigableBoards.contains(move)) {
+				} else {
+				if (!visitedBoards.contains(move)) {
 					boardMap.put(move, currBoard);
-					navigableBoards.add(move);
+					//System.out.println("boardmap " + boardMap);
+					visitedBoards.add(move);
+					navigableBoards.push(move);
+					System.out.println("navb " + navigableBoards);
+
 				}
 			}
+
+		}
 		}
 		return null;
 	}
@@ -107,17 +118,20 @@ public class Solver {
 		return path;
 	}
 	
-	public String getMove(Board before, Board after) {
+	public static String getMove(Board before, Board after) {
 
 		StringBuilder move = new StringBuilder();
+		if (before.equals(after)) {
+			return "0 0 0 0"; //not sure what should be returned if no moves are necessary
+		}
 		mainLoop:
 		for (Block a : before.getBlocks()) {
 			for (Block b : after.getBlocks()) {
 				if (!a.equals(b) && (a.getBlock() == b.getBlock())) {
-					move.append(a.getTopLeftCol());
-					move.append(a.getTopLeftRow());
+					move.append(a.getTopLeftRow() + " ");
+					move.append(a.getTopLeftCol() + " ");
+					move.append(b.getTopLeftRow() + " ");
 					move.append(b.getTopLeftCol());
-					move.append(b.getTopLeftRow());
 					break mainLoop;
 				}
 			}
@@ -132,6 +146,11 @@ public class Solver {
 		if (moves == null) {
 			System.out.println(1);
 			System.exit(1);
+		} else if (moves.size() == 1) {
+			board1 = moves.getFirst();
+			System.out.println(getMove(board1, board1));
+			System.out.println(0);
+			System.exit(0);
 		} else {
 			Iterator<Board> movesIter = moves.iterator(); 
 			board1 = movesIter.next();
@@ -145,6 +164,7 @@ public class Solver {
 			System.exit(0);
 		}
 	}
+	
 	public Board makeGoalBoard(String goalFile) {
 		try {
 			Board goalBoard = null;
