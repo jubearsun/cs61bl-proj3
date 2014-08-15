@@ -195,31 +195,13 @@ public class Board {
 		return results;
 	}
 	
-	@Override
-	public boolean equals(Object otherBoard) {
-		Board other = (Board) otherBoard;
-		if (this.getBlocks().size() != other.getBlocks().size()) {
-			return false;
-		}
-		outerloop:
-		for (int i = 0; i < this.getBlocks().size(); i++) {
-			for (int j = 0; j < other.getBlocks().size(); j++) {
-				if (this.getBlocks().get(i).equals(other.getBlocks().get(j)) && !other.getBlocks().get(i).getEqualsMark()) {
-					other.getBlocks().get(i).setEqualsMark(true);
-					this.getBlocks().get(i).setEqualsMark(true);		
-					continue outerloop;
-				}
-			}
-		}
-		for (int i = 0; i < this.getBlocks().size(); i++) {
-			if (!this.getBlocks().get(i).getEqualsMark() || !other.getBlocks().get(i).getEqualsMark()) {
+	public boolean equalsToGoal(Object otherBoard) {
+		Board goal = (Board) otherBoard;
+		for (int i = 0; i < goal.getBlocks().size(); i++) {
+			if (this.getBlock(goal.getBlocks().get(i).getTopLeftCoor()) == null) {
 				return false;
 			}
 		}
-		for (int i = 0; i < other.getBlocks().size(); i++) {
-			other.getBlocks().get(i).setEqualsMark(false);
-			this.getBlocks().get(i).setEqualsMark(false);
-		}
 		return true;
-	}	
+	}
 }
