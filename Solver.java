@@ -1,3 +1,5 @@
+
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -23,7 +25,7 @@ public class Solver {
 	
 	public static void main(String [] args) throws FileNotFoundException {
 		if (args.length != 2) {
-			System.out.println(2);	
+		
 			System.exit(2);
 		}
 		Solver solve = new Solver(args[0]);
@@ -49,7 +51,7 @@ public class Solver {
 				}
 				else if ((i - 2) % 4 == 0) {
 					if (boardNBlockHelper.size() != 4) {
-						System.out.println(4);
+					
 						System.exit(4);
 					}
 					else {
@@ -62,14 +64,14 @@ public class Solver {
 				i++;
 			}
 			if (boardNBlockHelper.size() != 0) {
-				System.out.println(4);
+			
 				System.exit(4);
 			}
 			myBoard.createBoard(myBlocks, 4);
 			s.close();
 		}
 		catch (FileNotFoundException e) {
-			System.out.println(3);
+			
 			System.exit(3);
 		}
 	}
@@ -82,25 +84,24 @@ public class Solver {
 		//ListIterator<Board> navIterator = navigableBoards.listIterator();
 		while (!navigableBoards.isEmpty()) {
 			currBoard = navigableBoards.pop();
-			//System.out.println("currBoard " + currBoard);
+		
 			if (currBoard.equalsToGoal(goal)) {
-				System.out.println("Got to the goal");
+				//System.out.println("Got to the goal");
 				return buildPath(currBoard);
 			}
 			//navIterator.remove();
 			//navigableBoards.remove(currBoard);
 			visitedBoards.add(currBoard);
 			for (Board move : currBoard.generateMoves()) {
-				//System.out.println("move " + move);
+			
 				if (visitedBoards.contains(move)) {
 					continue;
 				} else {
 				if (!visitedBoards.contains(move)) {
 					boardMap.put(move, currBoard);
-					//System.out.println("boardmap " + boardMap);
+					
 					visitedBoards.add(move);
 					navigableBoards.push(move);
-					System.out.println("navb " + navigableBoards);
 
 				}
 			}
@@ -148,13 +149,13 @@ public class Solver {
 		Board board1;
 		Board board2;
 		if (moves == null) {
-			System.out.println(1);
+	
 			System.exit(1);
 		} else if (moves.size() == 1) {
 			board1 = moves.getFirst();
 			System.out.println(getMove(board1, board1));
-			System.out.println("Sucess!");
-			System.out.println(0);
+			//System.out.println("Sucess!");
+	
 			System.exit(0);
 		} else {
 			Iterator<Board> movesIter = moves.iterator(); 
@@ -165,7 +166,7 @@ public class Solver {
 				board2 = movesIter.next();
 				System.out.println(getMove(board1, board2)); 
 			}
-			System.out.println(0);
+			
 			System.exit(0);
 		}
 	}
@@ -183,7 +184,7 @@ public class Solver {
 				boardNBlockHelper.add(s.nextInt());
 				if (i % 4 == 0) {
 					if (boardNBlockHelper.size() != 4) {
-						System.out.println(4);
+		
 						System.exit(4);
 					}
 					else {
@@ -196,7 +197,7 @@ public class Solver {
 				i++;
 				}
 				if (boardNBlockHelper.size() != 0) {
-					System.out.println(4);
+					
 					System.exit(4);
 				}
 				
@@ -205,7 +206,7 @@ public class Solver {
 			return goalBoard;
 		}
 		catch (FileNotFoundException e) {
-			System.out.println(4);
+	
 			System.exit(4);
 		}
 		return null;
