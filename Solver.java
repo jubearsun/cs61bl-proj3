@@ -83,7 +83,8 @@ public class Solver {
 		while (!navigableBoards.isEmpty()) {
 			currBoard = navigableBoards.pop();
 			//System.out.println("currBoard " + currBoard);
-			if (currBoard.equals(goal)) {
+			if (currBoard.equalsToGoal(goal)) {
+				System.out.println("Got to the goal");
 				return buildPath(currBoard);
 			}
 			//navIterator.remove();
@@ -124,7 +125,7 @@ public class Solver {
 	public static String getMove(Board before, Board after) {
 
 		StringBuilder move = new StringBuilder();
-		if (before.equals(after)) {
+		if (before.equalsToGoal(after)) {
 			return "0 0 0 0"; //not sure what should be returned if no moves are necessary
 		}
 		mainLoop:
@@ -152,6 +153,7 @@ public class Solver {
 		} else if (moves.size() == 1) {
 			board1 = moves.getFirst();
 			System.out.println(getMove(board1, board1));
+			System.out.println("Sucess!");
 			System.out.println(0);
 			System.exit(0);
 		} else {
