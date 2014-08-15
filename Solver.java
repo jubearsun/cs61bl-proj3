@@ -178,7 +178,7 @@ public class Solver {
 					System.exit(4);
 				}
 				
-			goalBoard.createBoard(goalBlocks); // need to print out 4
+			goalBoard.createBoard(goalBlocks, 4); 
 			
 			return goalBoard;
 		}
