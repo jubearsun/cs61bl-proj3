@@ -1,21 +1,17 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.PriorityQueue;
+import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.Set;
 
 
 public class Solver {
 	
-	PriorityQueue<Board> fringe = new PriorityQueue<Board>(); //probably not going to use this in the end
-	
-	//Going to try to implement A* search
-	//http://www.policyalmanac.org/games/aStarTutorial.htm
-
+	private HashMap<Board, Board> boardMap = new HashMap<Board, Board>();
 	private Set<Board> navigableBoards = new HashSet<Board>();
 	private Set<Board> visitedBoards = new HashSet<Board>();
 	
@@ -63,17 +59,15 @@ public class Solver {
 		}
 	}
 	
-	public ArrayList<Board> toGoal(Board initial, Board goal) { //return type is not set yet; still debating on best data structure
+	public LinkedList<Board> toGoal(Board initial, Board goal) { 
 		Board currBoard = null;
-		
-		ArrayList<Board> rtn = new ArrayList<Board>(); //data structure is probably going to change
-		
+				
 		navigableBoards.add(initial);
 		Iterator<Board> navIterator = navigableBoards.iterator();
 		while (navIterator.hasNext()) {
 			currBoard = navIterator.next();
-			if (currBoard.equals(goal)) { //need to define a .equals method
-				return rtn;
+			if (currBoard.equals(goal)) { 
+				return buildPath(currBoard);
 			}
 			navigableBoards.remove(currBoard);
 			visitedBoards.add(currBoard);
@@ -81,19 +75,26 @@ public class Solver {
 				if (visitedBoards.contains(move)) {
 					continue;
 				}
-				
 				if (!navigableBoards.contains(move)) {
-					rtn.add(move);
-					//More needed to construct the path to goal
+					boardMap.put(move, currBoard);
 					navigableBoards.add(move);
 				}
 			}
 		}
-		
-		
-		return rtn;
+		return null;
 	}
 	
+	private LinkedList<Board> buildPath(Board start) {
+		LinkedList<Board> path = new LinkedList<Board>();
+		Board current = start;
+		Board parent;
+		while (current != null) {
+			path.addFirst(current);
+			parent = boardMap.get(current);
+			current = parent; 
+		}
+		return path;
+	}
 	
 	public String getMove(Board before, Board after) {
 
@@ -111,5 +112,26 @@ public class Solver {
 			}
 		}
 		return move.toString();
+	}
+	
+	public void printMoves(Board init, Board goal) { 
+		LinkedList<Board> moves = toGoal(init, goal);
+		Board board1;
+		Board board2;
+		if (moves == null) {
+			System.out.println(1);
+			System.exit(1);
+		} else {
+			Iterator<Board> movesIter = moves.iterator(); 
+			board1 = movesIter.next();
+			board2 = board1;
+			while (movesIter.hasNext()) {
+				board1 = board2;
+				board2 = movesIter.next();
+				System.out.println(getMove(board1, board2)); 
+			}
+			System.out.println(0);
+			System.exit(0);
+		}
 	}
 }
