@@ -20,6 +20,17 @@ public class Solver {
 	private ArrayList<Block> myBlocks;
 	private int currentBlock = 1; 
 	
+	public static void main(String [] args) throws FileNotFoundException {
+		if (args.length != 2) {
+			System.out.println(2);
+			System.exit(2);
+		}
+		Solver solve = new Solver(args[0]);
+		Board goal = solve.makeGoalBoard(args[1]);
+		
+		solve.printMoves(solve.myBoard, goal);
+	}
+	
 	public Solver(String init) {
 		try {
 			File initFile = new File(init);
@@ -133,5 +144,48 @@ public class Solver {
 			System.out.println(0);
 			System.exit(0);
 		}
+	}
+	public Board makeGoalBoard(String goalFile) {
+		try {
+			Board goalBoard = null;
+			File goal = new File(goalFile);
+			ArrayList<Block> goalBlocks = new ArrayList<Block>();
+			Scanner s = new Scanner(goal);
+			int i = 1;
+			ArrayList<Integer> boardNBlockHelper = new ArrayList<Integer>();
+			while (s.hasNext()) {
+				boardNBlockHelper.add(s.nextInt());
+				if (i == 2) {
+					goalBoard = new Board(boardNBlockHelper.get(0), boardNBlockHelper.get(1));
+					boardNBlockHelper.clear();
+				}
+				else if ((i - 2) % 4 == 0) {
+					if (boardNBlockHelper.size() != 4) {
+						System.out.println(4);
+						System.exit(4);
+					}
+					else {
+						Block blockToAdd = new Block(boardNBlockHelper, currentBlock);
+						currentBlock++;
+						goalBlocks.add(blockToAdd);
+						boardNBlockHelper.clear();
+					}
+				}
+				i++;
+				}
+				if (boardNBlockHelper.size() != 0) {
+					System.out.println(4);
+					System.exit(4);
+				}
+				
+			goalBoard.createBoard(goalBlocks); // need to print out 4
+			
+			return goalBoard;
+		}
+		catch (FileNotFoundException e) {
+			System.out.println(4);
+			System.exit(4);
+		}
+		return null;
 	}
 }
