@@ -16,7 +16,7 @@ public class Checker {
 	
 	public static void main(String [] args) throws FileNotFoundException {
 		if (args.length != 2) {
-			System.out.println(2);
+			System.out.println("Invalid inputs, needs exactly 2 inputs");
 			System.exit(2);
 		}
 		Checker init = new Checker(args[0]);
@@ -35,7 +35,7 @@ public class Checker {
 				init.printBoard();
 			}
 			catch (NoSuchElementException e) {
-				System.out.println(4);
+				System.out.println("Invalid input, needs 4 integers seperated by spaces");
 				System.exit(4);
 			}
 		}
@@ -57,7 +57,7 @@ public class Checker {
 				}
 				else if ((i - 2) % 4 == 0) {
 					if (boardNBlockHelper.size() != 4) {
-						System.out.println(5);
+						System.out.println("init file is incorrectly formatted");
 						System.exit(5);
 					}
 					else {
@@ -70,13 +70,13 @@ public class Checker {
 				i++;
 			}
 			if (boardNBlockHelper.size() != 0) {
-				System.out.println(5);
+				System.out.println("init file is incorrectly formatted");
 				System.exit(5);
 			}
 			myBoard.createBoard(myBlocks, 5);
 		}
 		catch (FileNotFoundException e) {
-			System.out.println(3);
+			System.out.println("No such file found");
 			System.exit(3);
 		}
 	}
@@ -89,7 +89,7 @@ public class Checker {
 
 	public void makeMove(int[] oldSpot, int[] newSpot) {
 		if (Math.abs(oldSpot[0] + oldSpot[1] - newSpot[0] - newSpot[1]) > 1) {
-			System.out.println(6);
+			System.out.println("impossible or invalid moves");
 			System.exit(6);
 		}
 		myBoard.makeMove(oldSpot, newSpot);
@@ -105,29 +105,23 @@ public class Checker {
 			File goalBlocks = new File(goalFile);
 			Scanner gBlocks = new Scanner(goalBlocks);
 			try {
-				ArrayList<Integer> myCoors = new ArrayList<Integer>();
-				if (myCoors.size() != 4) {
-					System.out.println(5);
-					System.exit(5);
-				}
-				else {
-					while (gBlocks.hasNext()) {
-						myCoors.add(gBlocks.nextInt());
-						myCoors.add(gBlocks.nextInt());
-						myCoors.add(gBlocks.nextInt());
-						myCoors.add(gBlocks.nextInt());
-						rtnBlocks.add(new Block(myCoors, currentBlock));
-						currentBlock++;
-						myCoors.clear();
+				ArrayList<Integer> myCoors = new ArrayList<Integer>(); 
+				while (gBlocks.hasNext()) {
+					myCoors.add(gBlocks.nextInt());
+					myCoors.add(gBlocks.nextInt());
+					myCoors.add(gBlocks.nextInt());
+					myCoors.add(gBlocks.nextInt());
+					rtnBlocks.add(new Block(myCoors, currentBlock));
+					currentBlock++;
+					myCoors.clear();
 					}
-				}
 			} catch (NoSuchElementException e) {
-				System.out.println(5);
+				System.out.println("goal file is incorrectly formatted");
 				System.exit(5);
 			}
 		}
 		catch (FileNotFoundException e) {
-			System.out.println(3);
+			System.out.println("No such file found");
 			System.exit(3);
 		}
 		return rtnBlocks;
@@ -145,10 +139,10 @@ public class Checker {
 			}
 		}
 		if (gBlocks.size() == blocksMatchedSoFar) {
-			System.out.println(0);
+			System.out.println("successfully solved the puzzle");
 			System.exit(0);
 		} else {
-			System.out.println(1);
+			System.out.println("input moves do not solve the puzzle");
 			System.exit(1);
 		}
 	}
