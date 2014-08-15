@@ -2,11 +2,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.Stack;
 
 
@@ -23,7 +21,7 @@ public class Solver {
 	
 	public static void main(String [] args) throws FileNotFoundException {
 		if (args.length != 2) {
-			System.out.println(2);
+			System.out.println(2);	
 			System.exit(2);
 		}
 		Solver solve = new Solver(args[0]);
@@ -64,6 +62,7 @@ public class Solver {
 				System.exit(4);
 			}
 			myBoard.createBoard(myBlocks, 4);
+			s.close();
 		}
 		catch (FileNotFoundException e) {
 			System.out.println(3);
@@ -199,7 +198,7 @@ public class Solver {
 				}
 				
 			goalBoard.createBoard(goalBlocks, 4); 
-			
+			s.close();
 			return goalBoard;
 		}
 		catch (FileNotFoundException e) {
