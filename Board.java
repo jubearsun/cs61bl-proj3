@@ -7,7 +7,6 @@ public class Board {
 	private int myHeight;
 	private int myWidth;
 	private ArrayList<Block> blocks;
-	private ArrayList<Block> myBlocks;
 	
 	public Board(int height,int width) {
 		blocks = new ArrayList<Block>();
