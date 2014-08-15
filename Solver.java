@@ -13,11 +13,13 @@ public class Solver {
 	private HashMap<Board, Board> boardMap = new HashMap<Board, Board>();
 	private Stack<Board> navigableBoards = new Stack<Board>();
 	private ArrayList<Board> visitedBoards = new ArrayList<Board>();
+	private int[] goalDimensions = new int[2];
 	
 	// used to initialize board, same as Checker
 	private Board myBoard;
 	private ArrayList<Block> myBlocks;
 	private int currentBlock = 1; 
+	
 	
 	public static void main(String [] args) throws FileNotFoundException {
 		if (args.length != 2) {
@@ -41,6 +43,8 @@ public class Solver {
 				boardNBlockHelper.add(s.nextInt());
 				if (i == 2) {
 					myBoard = new Board(boardNBlockHelper.get(0), boardNBlockHelper.get(1));
+					goalDimensions[0] = boardNBlockHelper.get(0);
+					goalDimensions[1] = boardNBlockHelper.get(1);
 					boardNBlockHelper.clear();
 				}
 				else if ((i - 2) % 4 == 0) {
@@ -172,13 +176,10 @@ public class Solver {
 			Scanner s = new Scanner(goal);
 			int i = 1;
 			ArrayList<Integer> boardNBlockHelper = new ArrayList<Integer>();
+			goalBoard = new Board(goalDimensions[0], goalDimensions[1]);
 			while (s.hasNext()) {
 				boardNBlockHelper.add(s.nextInt());
-				if (i == 2) {
-					goalBoard = new Board(boardNBlockHelper.get(0), boardNBlockHelper.get(1));
-					boardNBlockHelper.clear();
-				}
-				else if ((i - 2) % 4 == 0) {
+				if (i % 4 == 0) {
 					if (boardNBlockHelper.size() != 4) {
 						System.out.println(4);
 						System.exit(4);
