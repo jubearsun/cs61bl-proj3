@@ -25,12 +25,12 @@ public class Board {
 		return null;
 	}
 	
-	public void createBoard(ArrayList<Block> myBlocks) { 
+	public void createBoard(ArrayList<Block> myBlocks, int print) { 
 		for (int i = 0; i < myBlocks.size(); i ++) {
 			Block currBlock = myBlocks.get(i);
 			if (isBlocked(currBlock)) {
-				System.out.println(5);
-				System.exit(5);
+				System.out.println(print);
+				System.exit(print);
 			} else {
 				putBlock(currBlock);
 			}
