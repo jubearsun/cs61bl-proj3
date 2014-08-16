@@ -11,15 +11,12 @@ public class Block {
 	private boolean equalsMark = false; // used in determining if two boards are equal
 	
 	public Block (ArrayList<Integer> myCoors, int myBlockInd) {
-		System.out.println(myCoors.toString());
 		blockIndicator = myBlockInd;
-		
-			topLeftCoor[0] = myCoors.get(0);
-			topLeftCoor[1] = myCoors.get(1);
-			bottomRightCoor[0] = myCoors.get(2);
-			bottomRightCoor[1] = myCoors.get(3);
-			makeDimension(myCoors);
-		
+		topLeftCoor[0] = myCoors.get(0);
+		topLeftCoor[1] = myCoors.get(1);
+		bottomRightCoor[0] = myCoors.get(2);
+		bottomRightCoor[1] = myCoors.get(3);
+		makeDimension(myCoors);	
 	}
 	
 	public void makeDimension(ArrayList<Integer> myCoors) {
