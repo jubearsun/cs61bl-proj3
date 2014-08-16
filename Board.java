@@ -77,7 +77,7 @@ public class Board {
 		blocks.remove(block);
 	}
 	
-	public void makeMove(int[] oldSpot, int[] newSpot) { // changed from private to public
+	public void makeMove(int[] oldSpot, int[] newSpot) {
 		if (oldSpot[0] > myHeight - 1 || newSpot[0] > myHeight - 1 ||
 			oldSpot[1] > myWidth - 1 || newSpot[1] > myWidth - 1) {
 			System.out.println("move is out of bound");
@@ -178,15 +178,15 @@ public class Board {
 	
 	public ArrayList<Board> generateMoves() {
 		ArrayList<Board> results = new ArrayList<Board>();
-		Board moveRight = new Board(myHeight, myWidth);
-		moveRight.createBoard(blocks, 4);
-		Board moveLeft = new Board(myHeight, myWidth);
-		moveLeft.createBoard(blocks, 4);
-		Board moveUp = new Board(myHeight, myWidth);
-		moveUp.createBoard(blocks, 4);
-		Board moveDown = new Board(myHeight, myWidth);
-		moveDown.createBoard(blocks, 4);
 		for (Block block : this.blocks) {
+			Board moveRight = new Board(myHeight, myWidth);
+			moveRight.createBoard(blocks, 4);
+			Board moveLeft = new Board(myHeight, myWidth);
+			moveLeft.createBoard(blocks, 4);
+			Board moveUp = new Board(myHeight, myWidth);
+			moveUp.createBoard(blocks, 4);
+			Board moveDown = new Board(myHeight, myWidth);
+			moveDown.createBoard(blocks, 4);
 			Block curr = block;
 			int[] toMove = block.getTopLeftCoor();
 			System.out.println("Trying to move the block labeled " + curr.getBlockIndicator());
@@ -220,7 +220,7 @@ public class Board {
 			if (isLegalMove(curr, "down")) {
 				moveDown.makeMove(toMove, down);
 				results.add(moveDown);
-				System.out.println("success, down");
+				System.out.println("success, down");				
 			}					
 		}
 		System.out.println("THE RESULTS ARE");
