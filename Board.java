@@ -128,10 +128,26 @@ public class Board {
 	}
 	
 	private boolean isLegalMove(Block old, int[] newSpot) {
-		int newRightCornerRow = old.getBottomRightRow() + (newSpot[0]-old.getTopLeftRow());
-		int newRightCornerCol = old.getBottomRightCol() + (newSpot[1]-old.getTopLeftCol());
+		int newRightCornerRow = old.getBottomRightRow() + (newSpot[0]+ old.getTopLeftRow());
+		int newRightCornerCol = old.getBottomRightCol() + (newSpot[1]- old.getTopLeftCol());
+		//System.out.println(old);
+		//System.out.println(newRightCornerCol + " " + " " + old.getBottomRightRow() + " " + old.getBottomRightCol());
+		boolean middle = true;
+
 		try {
-			boolean legality = !((old.getTopLeftRow() > myHeight - 1 || newSpot[0] > myHeight - 1 ||
+			for (int a = newRightCornerRow; a <= newSpot[0]; a++) {
+				for (int b = newSpot[1]; b <= newRightCornerCol; b++) {
+					if (board[a][b] != 0) {
+						middle = false;
+					}
+				}
+			}
+		} catch (ArrayIndexOutOfBoundsException e) {
+			middle = false;
+		}
+		
+		try {
+			boolean legality = middle && !((old.getTopLeftRow() > myHeight - 1 || newSpot[0] > myHeight - 1 ||
 				old.getTopLeftCol() > myWidth - 1 || newSpot[1] > myWidth - 1) || 
 				board[old.getTopLeftRow()][old.getTopLeftCol()] == 0 ||
 				(board[newSpot[0]][newSpot[1]] != 0 && 
