@@ -19,7 +19,7 @@ public class Solver {
 	private Board myBoard;
 	private ArrayList<Block> myBlocks;
 	private int currentBlock = 1; 
-	public static boolean debugging = false;
+	public static boolean debugging = true;
 	
 	public static void main(String [] args) throws FileNotFoundException {
 		if (args.length != 2) {
@@ -103,6 +103,10 @@ public class Solver {
 			//navigableBoards.remove(currBoard);
 			visitedBoards.add(currBoard);
 			for (Board move : currBoard.generateMoves()) {
+				if (debugging) {
+					System.out.println("POTENTIAL MOVE");
+					move.printBoard();;
+				}
 				if (visitedBoards.contains(move)) {
 					continue;
 				} else {
@@ -110,10 +114,6 @@ public class Solver {
 						boardMap.put(move, currBoard);					
 						visitedBoards.add(move);
 						navigableBoards.push(move);
-						if (debugging) {
-							System.out.println("POTENTIAL MOVE");
-							move.printBoard();;
-						}
 	
 					}
 				}
