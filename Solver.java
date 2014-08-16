@@ -103,10 +103,6 @@ public class Solver {
 			//navigableBoards.remove(currBoard);
 			visitedBoards.add(currBoard);
 			for (Board move : currBoard.generateMoves()) {
-				if (debugging) {
-					System.out.println("POTENTIAL MOVE");
-					move.printBoard();;
-				}
 				if (visitedBoards.contains(move)) {
 					continue;
 				} else {
