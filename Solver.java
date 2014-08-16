@@ -1,5 +1,3 @@
-
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -21,16 +19,17 @@ public class Solver {
 	private Board myBoard;
 	private ArrayList<Block> myBlocks;
 	private int currentBlock = 1; 
-	
+	public static boolean debugging = false;
 	
 	public static void main(String [] args) throws FileNotFoundException {
 		if (args.length != 2) {
-		
+			if (debugging) {
+				System.out.println(2);
+			}
 			System.exit(2);
 		}
 		Solver solve = new Solver(args[0]);
-		Board goal = solve.makeGoalBoard(args[1]);
-		
+		Board goal = solve.makeGoalBoard(args[1]);		
 		solve.printMoves(solve.myBoard, goal);
 	}
 	
@@ -51,7 +50,9 @@ public class Solver {
 				}
 				else if ((i - 2) % 4 == 0) {
 					if (boardNBlockHelper.size() != 4) {
-					
+						if (debugging) {
+							System.out.println(4);
+						}
 						System.exit(4);
 					}
 					else {
@@ -64,14 +65,18 @@ public class Solver {
 				i++;
 			}
 			if (boardNBlockHelper.size() != 0) {
-			
+				if (debugging) {
+					System.out.println(4);
+				}
 				System.exit(4);
 			}
 			myBoard.createBoard(myBlocks, 4);
 			s.close();
 		}
 		catch (FileNotFoundException e) {
-			
+			if (debugging) {
+				System.out.println(3);
+			}
 			System.exit(3);
 		}
 	}
@@ -149,13 +154,16 @@ public class Solver {
 		Board board1;
 		Board board2;
 		if (moves == null) {
-	
+			if (debugging) {
+				System.out.println("1");
+			}
 			System.exit(1);
 		} else if (moves.size() == 1) {
 			board1 = moves.getFirst();
 			System.out.println(getMove(board1, board1));
-			//System.out.println("Sucess!");
-	
+			if (debugging) {
+				System.out.println("Success!");
+			}
 			System.exit(0);
 		} else {
 			Iterator<Board> movesIter = moves.iterator(); 
@@ -166,7 +174,9 @@ public class Solver {
 				board2 = movesIter.next();
 				System.out.println(getMove(board1, board2)); 
 			}
-			
+			if (debugging) {
+				System.out.println("Success!");
+			}
 			System.exit(0);
 		}
 	}
@@ -184,7 +194,9 @@ public class Solver {
 				boardNBlockHelper.add(s.nextInt());
 				if (i % 4 == 0) {
 					if (boardNBlockHelper.size() != 4) {
-		
+						if (debugging) {
+							System.out.println(4);
+						}
 						System.exit(4);
 					}
 					else {
@@ -197,7 +209,9 @@ public class Solver {
 				i++;
 				}
 				if (boardNBlockHelper.size() != 0) {
-					
+					if (debugging) {
+						System.out.println(4);
+					}
 					System.exit(4);
 				}
 				
@@ -206,7 +220,9 @@ public class Solver {
 			return goalBoard;
 		}
 		catch (FileNotFoundException e) {
-	
+			if (debugging) {
+				System.out.println(4);
+			}
 			System.exit(4);
 		}
 		return null;
