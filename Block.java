@@ -52,6 +52,10 @@ public class Block {
 		return topLeftCoor;
 	}
 	
+	public int[] getBottomRightCoor() {
+		return bottomRightCoor;
+	}
+	
 	public int getBlockIndicator() {
 		return blockIndicator;
 	}
