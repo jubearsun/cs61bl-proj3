@@ -19,7 +19,7 @@ public class Solver {
 	private Board myBoard;
 	private ArrayList<Block> myBlocks;
 	private int currentBlock = 1; 
-	public static boolean debugging = false;
+	public static boolean debugging = true;
 	
 	public static void main(String [] args) throws FileNotFoundException {
 		if (args.length != 2) {
@@ -113,14 +113,12 @@ public class Solver {
 					}
 					continue;
 				} else {
-						
-						boardMap.put(move, currBoard);					
-						visitedBoards.add(move);
-						navigableBoards.push(move);
-						if (debugging) {
-							System.out.println("This move is being added to the stack");
-							move.printBoard();
-						
+					boardMap.put(move, currBoard);					
+					visitedBoards.add(move);
+					navigableBoards.push(move);
+					if (debugging) {
+						System.out.println("This move is being added to the stack");
+						move.printBoard();						
 					}
 				}
 			}
