@@ -278,6 +278,9 @@ public class Board {
 	}	
 	
 	public boolean equalsToGoal(Object otherBoard) {
+		if (otherBoard.equals(this)) {
+			return true;
+		}
 		Board goal = (Board) otherBoard;
 		for (int i = 0; i < goal.getBlocks().size(); i++) {
 			if (this.getBlock(goal.getBlocks().get(i).getTopLeftCoor()) == null) {
