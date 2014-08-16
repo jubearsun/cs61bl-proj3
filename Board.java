@@ -5,6 +5,7 @@ public class Board {
 	private int myHeight;
 	private int myWidth;
 	private ArrayList<Block> blocks;
+	private static boolean debugging = false;
 	
 	public Board(int height,int width) {
 		blocks = new ArrayList<Block>();
@@ -178,6 +179,10 @@ public class Board {
 	
 	public ArrayList<Board> generateMoves() {
 		ArrayList<Board> results = new ArrayList<Board>();
+		if (debugging) {
+			System.out.println("The current board is ");
+			this.printBoard();
+		}
 		for (Block block : this.blocks) {
 			Board moveRight = new Board(myHeight, myWidth);
 			moveRight.createBoard(blocks, 4);
@@ -189,7 +194,9 @@ public class Board {
 			moveDown.createBoard(blocks, 4);
 			Block curr = block;
 			int[] toMove = block.getTopLeftCoor();
-			System.out.println("Trying to move the block labeled " + curr.getBlockIndicator());
+			if (debugging) {
+				System.out.println("Trying to move the block labeled " + curr.getBlockIndicator());
+			}
 			int[] right = new int[2];
 			right[0] = toMove[0];
 			right[1] = toMove[1] + 1;
@@ -205,31 +212,40 @@ public class Board {
 			if (isLegalMove(curr, "right")) {
 				moveRight.makeMove(toMove, right);
 				results.add(moveRight);
-				System.out.println("success, right");
+				if (debugging) {
+					System.out.println("success, right");
+				}
 			} 
 			if (isLegalMove(curr, "left")) {
 				moveLeft.makeMove(toMove, left);
 				results.add(moveLeft);
-				System.out.println("success, left");
+				if (debugging) {
+					System.out.println("success, left");
+				}
 			} 
 			if (isLegalMove(curr, "up")) {
 				moveUp.makeMove(toMove, up);
 				results.add(moveUp);
-				System.out.println("success, up");
+				if (debugging) {
+					System.out.println("success, up");
+				}
 			}
 			if (isLegalMove(curr, "down")) {
 				moveDown.makeMove(toMove, down);
 				results.add(moveDown);
-				System.out.println("success, down");				
+				if (debugging) {
+					System.out.println("success, down");
+				}
 			}					
 		}
-		System.out.println("THE RESULTS ARE");
-		for (Board element: results) {
-			element.printBoard();
-			System.out.println("--------");
+		if (debugging) {
+			System.out.println("THE RESULTS ARE");
+			for (Board element: results) {
+				element.printBoard();
+				System.out.println("--------");
+			}
+			System.out.println("DONE");
 		}
-		
-		System.out.println("DONE");
 		return results;
 	}
 	
