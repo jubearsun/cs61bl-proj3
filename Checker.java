@@ -20,6 +20,7 @@ public class Checker {
 			System.exit(2);
 		}
 		Checker init = new Checker(args[0]);
+		//init.printBoard();
 		ArrayList<Block> goalBlocks = init.makeGoalBlocks(args[1]);
 		int[] oldSpot = new int[2];
 		int[] newSpot = new int[2];
@@ -31,6 +32,7 @@ public class Checker {
 				newSpot[0] = s.nextInt();
 				newSpot[1] = s.nextInt();
 				init.makeMove(oldSpot, newSpot);
+				//init.printBoard();
 			}
 			catch (NoSuchElementException e) {
 				System.out.println("Invalid input, needs 4 integers seperated by spaces");
