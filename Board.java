@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Board {
 	private int[][] board;
@@ -27,9 +26,7 @@ public class Board {
 	public void createBoard(ArrayList<Block> myBlocks, int print) { 
 		for (int i = 0; i < myBlocks.size(); i ++) {
 			Block currBlock = myBlocks.get(i);
-			int[] myTopLeft = new int[2];
-			myTopLeft = currBlock.getTopLeftCoor();
-			if (isBlocked(currBlock, myTopLeft)) {
+			if (isBlocked(currBlock)) {
 				System.out.println("unable to make board due to invalid format");
 				System.exit(print);
 			} else {
@@ -38,20 +35,10 @@ public class Board {
 		}
 	}
 	
-	private boolean isBlocked(Block block, int[] newSpot) {
-		int[] myDimension = block.getDimension();
-		ArrayList<Integer> myCoors = new ArrayList<Integer>();
-		myCoors.add(newSpot[0]);
-		myCoors.add(newSpot[1]);
-		myCoors.add(myDimension[0] - 1 + block.getTopLeftRow());
-		myCoors.add(myDimension[1] - 1 + block.getTopLeftCol());
-		Block newBlock = new Block(myCoors, block.getBlock());
-		for (int a = newBlock.getBottomRightRow(); a <= newBlock.getTopLeftRow(); a++) {
-			for (int i = newBlock.getTopLeftCol(); i <= newBlock.getBottomRightCol(); i++) {
-				if (a > myHeight - 1 || i > myWidth - 1) {
-					return true;
-				}
-				if (board[a][i] != 0 && board[a][i] != newBlock.getBlock()) {
+	private boolean isBlocked(Block block) {
+		for (int a = block.getBottomRightRow(); a <= block.getTopLeftRow(); a++) {
+			for (int i = block.getTopLeftCol(); i <= block.getBottomRightCol(); i++) {
+				if (board[a][i] != 0) {
 					return true;
 				}
 			}
@@ -60,9 +47,7 @@ public class Board {
 	}
 	
 	private void putBlock(Block block) {
-		int[] myTopLeft = new int[2];
-		myTopLeft = block.getTopLeftCoor();
-		if (isBlocked(block, myTopLeft)) {
+		if (isBlocked(block)) {
 			System.out.println("impossible move, blocked by another block");
 			System.exit(6);
 		} else {
@@ -100,7 +85,7 @@ public class Board {
 		}
 		int blockIndicator = board[oldSpot[0]][oldSpot[1]];
 		if (blockIndicator == 0) {
-			System.out.println("invalid input, block does not exists");
+			System.out.println("invalid input, unable to make move");
 			System.exit(6);
 		}
 		Block toBeRemoved = null;
@@ -142,36 +127,52 @@ public class Board {
 		return blocks;
 	}
 	
-	private boolean isLegalMove(Block old, int[] newSpot) {
-		int newRightCornerRow = old.getBottomRightRow() + (newSpot[0]+ old.getTopLeftRow());
-		int newRightCornerCol = old.getBottomRightCol() + (newSpot[1]- old.getTopLeftCol());
-		//System.out.println(old);
-		//System.out.println(newRightCornerCol + " " + " " + old.getBottomRightRow() + " " + old.getBottomRightCol());
-		boolean middle = true;
-
+	private boolean isLegalMove(Block old, String direction) {
+		int[] dimensions = old.getDimension();
+		int row;
+		int col;
 		try {
-			for (int a = newRightCornerRow; a <= newSpot[0]; a++) {
-				for (int b = newSpot[1]; b <= newRightCornerCol; b++) {
-					if (board[a][b] != 0) {
-						middle = false;
+			if (direction.equals("right")) {
+				col = old.getBottomRightCoor()[1] + 1;
+				row = old.getBottomRightCoor()[0]; 
+				for (int i = 0; i < dimensions[0]; i++) {
+					if (board[row - i][col] != 0) {
+						return false;
 					}
 				}
+				return true;
+			}
+			else if (direction.equals("left")) {
+				col = old.getTopLeftCoor()[1] - 1;
+				row = old.getTopLeftCoor()[0]; 
+				for (int i = 0; i < dimensions[0]; i++) {
+					if (board[row + i][col] != 0) {
+						return false;
+					}
+				}
+				return true;
+			}
+			else if (direction.equals("down")) {
+				col = old.getBottomRightCoor()[1];
+				row = old.getBottomRightCoor()[0] + 1; 
+				for (int i = 0; i < dimensions[1]; i++) {
+					if (board[row][col - i] != 0) {
+						return false;
+					}
+				}
+				return true;
+			} else {
+				col = old.getTopLeftCoor()[1];
+				row = old.getTopLeftCoor()[0] - 1; 
+				for (int i = 0; i < dimensions[1]; i++) {
+					if (board[row][col + i] != 0) {
+						return false;
+					}
+				}
+				return true;
 			}
 		} catch (ArrayIndexOutOfBoundsException e) {
-			middle = false;
-		}
-		
-		try {
-			boolean legality = middle && !((old.getTopLeftRow() > myHeight - 1 || newSpot[0] > myHeight - 1 ||
-				old.getTopLeftCol() > myWidth - 1 || newSpot[1] > myWidth - 1) || 
-				board[old.getTopLeftRow()][old.getTopLeftCol()] == 0 ||
-				(board[newSpot[0]][newSpot[1]] != 0 && 
-				(board[newRightCornerRow][newRightCornerCol] != 0 ||
-				board[newRightCornerRow][newRightCornerCol] != old.getBlockIndicator())
-				));
-			return legality;
-		} catch (ArrayIndexOutOfBoundsException e){
-			return false;
+			return false;	
 		}
 	}
 	
@@ -183,41 +184,52 @@ public class Board {
 		moveLeft.createBoard(blocks, 4);
 		Board moveUp = new Board(myHeight, myWidth);
 		moveUp.createBoard(blocks, 4);
-		Board moveDown =new Board(myHeight, myWidth);
+		Board moveDown = new Board(myHeight, myWidth);
 		moveDown.createBoard(blocks, 4);
 		for (Block block : this.blocks) {
-				Block curr = block;
-				int[] toMove = block.getTopLeftCoor();
-				int[] right = new int[2];
-				right[0] = toMove[0];
-				right[1] = toMove[1] + 1;
-				int[] left = new int[2];
-				left[0] = toMove[0];
-				left[1] = toMove[1] - 1;
-				int[] up = new int[2];
-				up[0] = toMove[0] - 1;
-				up[1] = toMove[1];
-				int[] down = new int[2];
-				down[0] = toMove[0] + 1;
-				down[1] = toMove[1];
-				
-				if (isLegalMove(curr, right)) {
-					moveRight.makeMove(toMove, right);
-					results.add(moveRight);
-				} 
-				if (isLegalMove(curr, left)) {
-					moveLeft.makeMove(toMove, left);
-					results.add(moveLeft);
-				} 
-				if (isLegalMove(curr, up)) {
-					moveUp.makeMove(toMove, up);
-					results.add(moveUp);
-				}
-				if (isLegalMove(curr, down)) {
-					moveDown.makeMove(toMove, down);
-					results.add(moveDown);
-				}					
+			Block curr = block;
+			int[] toMove = block.getTopLeftCoor();
+			System.out.println("Trying to move the block labeled " + curr.getBlockIndicator());
+			int[] right = new int[2];
+			right[0] = toMove[0];
+			right[1] = toMove[1] + 1;
+			int[] left = new int[2];
+			left[0] = toMove[0];
+			left[1] = toMove[1] - 1;
+			int[] up = new int[2];
+			up[0] = toMove[0] - 1;
+			up[1] = toMove[1];
+			int[] down = new int[2];
+			down[0] = toMove[0] + 1;
+			down[1] = toMove[1];			
+			if (isLegalMove(curr, "right")) {
+				moveRight.makeMove(toMove, right);
+				results.add(moveRight);
+				System.out.println("success, right");
+			} 
+			if (isLegalMove(curr, "left")) {
+				moveLeft.makeMove(toMove, left);
+				results.add(moveLeft);
+				System.out.println("success, left");
+			} 
+			if (isLegalMove(curr, "up")) {
+				moveUp.makeMove(toMove, up);
+				results.add(moveUp);
+				System.out.println("success, up");
+			}
+			if (isLegalMove(curr, "down")) {
+				moveDown.makeMove(toMove, down);
+				results.add(moveDown);
+				System.out.println("success, down");
+			}					
 		}
+		System.out.println("THE RESULTS ARE");
+		for (Board element: results) {
+			element.printBoard();
+			System.out.println("--------");
+		}
+		
+		System.out.println("DONE");
 		return results;
 	}
 	
@@ -230,8 +242,8 @@ public class Board {
 		outerloop:
 		for (int i = 0; i < this.getBlocks().size(); i++) {
 			for (int j = 0; j < other.getBlocks().size(); j++) {
-				if (this.getBlocks().get(i).equals(other.getBlocks().get(j)) && !other.getBlocks().get(i).getEqualsMark()) {
-					other.getBlocks().get(i).setEqualsMark(true);
+				if (this.getBlocks().get(i).equals(other.getBlocks().get(j)) && !other.getBlocks().get(j).getEqualsMark()) {
+					other.getBlocks().get(j).setEqualsMark(true);
 					this.getBlocks().get(i).setEqualsMark(true);		
 					continue outerloop;
 				}
