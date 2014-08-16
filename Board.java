@@ -1,213 +1,234 @@
-
-
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Scanner;
-import java.util.Stack;
 
-
-public class Solver {
+public class Board {
+	private int[][] board;
+	private int myHeight;
+	private int myWidth;
+	private ArrayList<Block> blocks;
 	
-	private HashMap<Board, Board> boardMap = new HashMap<Board, Board>();
-	private Stack<Board> navigableBoards = new Stack<Board>();
-	private ArrayList<Board> visitedBoards = new ArrayList<Board>();
-	private int[] goalDimensions = new int[2];
-	
-	// used to initialize board, same as Checker
-	private Board myBoard;
-	private ArrayList<Block> myBlocks;
-	private int currentBlock = 1; 
-	
-	
-	public static void main(String [] args) throws FileNotFoundException {
-		if (args.length != 2) {
-			System.exit(2);
-		}
-		Solver solve = new Solver(args[0]);
-		Board goal = solve.makeGoalBoard(args[1]);
-		
-		solve.printMoves(solve.myBoard, goal);
+	public Board(int height,int width) {
+		blocks = new ArrayList<Block>();
+		myHeight = height;
+		myWidth = width;
+		board = new int[height][width];
 	}
 	
-	public Solver(String init) {
-		try {
-			File initFile = new File(init);
-			myBlocks = new ArrayList<Block>();
-			Scanner s = new Scanner(initFile);
-			int i = 1;
-			ArrayList<Integer> boardNBlockHelper = new ArrayList<Integer>();
-			while (s.hasNext()) {
-				boardNBlockHelper.add(s.nextInt());
-				if (i == 2) {
-					myBoard = new Board(boardNBlockHelper.get(0), boardNBlockHelper.get(1));
-					goalDimensions[0] = boardNBlockHelper.get(0);
-					goalDimensions[1] = boardNBlockHelper.get(1);
-					boardNBlockHelper.clear();
-				}
-				else if ((i - 2) % 4 == 0) {
-					if (boardNBlockHelper.size() != 4) {
-					
-						System.exit(4);
-					}
-					else {
-						Block blockToAdd = new Block(boardNBlockHelper, currentBlock);
-						currentBlock++;
-						myBlocks.add(blockToAdd);
-						boardNBlockHelper.clear();
-					}
-				}
-				i++;
+	public Block getBlock(int[] topLeft) {
+		for (int i = 0; i < blocks.size(); i++) {
+			Block currBlock = blocks.get(i);
+			if (topLeft[0] == currBlock.getTopLeftRow() && topLeft[1] == currBlock.getTopLeftCol()) {
+				return currBlock;
 			}
-			if (boardNBlockHelper.size() != 0) {
-			
-				System.exit(4);
-			}
-			myBoard.createBoard(myBlocks, 4);
-			s.close();
-		}
-		catch (FileNotFoundException e) {
-			
-			System.exit(3);
-		}
-	}
-	
-	public LinkedList<Board> toGoal(Board initial, Board goal) { 
-		Board currBoard = null;
-		
-		navigableBoards.push(initial);
-		visitedBoards.add(initial);
-		//ListIterator<Board> navIterator = navigableBoards.listIterator();
-		while (!navigableBoards.isEmpty()) {
-			currBoard = navigableBoards.pop();
-		
-			if (currBoard.equalsToGoal(goal)) {
-				//System.out.println("Got to the goal");
-				return buildPath(currBoard);
-			}
-			//navIterator.remove();
-			//navigableBoards.remove(currBoard);
-			visitedBoards.add(currBoard);
-			for (Board move : currBoard.generateMoves()) {
-			
-				if (visitedBoards.contains(move)) {
-					continue;
-				} else {
-				if (!visitedBoards.contains(move)) {
-					boardMap.put(move, currBoard);
-					
-					visitedBoards.add(move);
-					navigableBoards.push(move);
-
-				}
-			}
-
-		}
 		}
 		return null;
 	}
 	
-	private LinkedList<Board> buildPath(Board start) {
-		LinkedList<Board> path = new LinkedList<Board>();
-		Board current = start;
-		Board parent;
-		while (current != null) {
-			path.addFirst(current);
-			parent = boardMap.get(current);
-			current = parent; 
+	public void createBoard(ArrayList<Block> myBlocks, int print) { 
+		for (int i = 0; i < myBlocks.size(); i ++) {
+			Block currBlock = myBlocks.get(i);
+			if (isBlocked(currBlock)) {
+				System.out.println("unable to make board due to invalid format");
+				System.exit(print);
+			} else {
+				putBlock(currBlock);
+			}
 		}
-		return path;
 	}
 	
-	public static String getMove(Board before, Board after) {
-
-		StringBuilder move = new StringBuilder();
-		if (before.equalsToGoal(after)) {
-			return "0 0 0 0"; //not sure what should be returned if no moves are necessary
-		}
-		mainLoop:
-		for (Block a : before.getBlocks()) {
-			for (Block b : after.getBlocks()) {
-				if (!a.equals(b) && (a.getBlock() == b.getBlock())) {
-					move.append(a.getTopLeftRow() + " ");
-					move.append(a.getTopLeftCol() + " ");
-					move.append(b.getTopLeftRow() + " ");
-					move.append(b.getTopLeftCol());
-					break mainLoop;
+	private boolean isBlocked(Block block) {
+		for (int a = block.getBottomRightRow(); a <= block.getTopLeftRow(); a++) {
+			for (int i = block.getTopLeftCol(); i <= block.getBottomRightCol(); i++) {
+				if (board[a][i] != 0) {
+					return true;
 				}
 			}
 		}
-		return move.toString();
+		return false;
 	}
 	
-	public void printMoves(Board init, Board goal) { 
-		LinkedList<Board> moves = toGoal(init, goal);
-		Board board1;
-		Board board2;
-		if (moves == null) {
-	
-			System.exit(1);
-		} else if (moves.size() == 1) {
-			board1 = moves.getFirst();
-			System.out.println(getMove(board1, board1));
-			//System.out.println("Sucess!");
-	
-			System.exit(0);
+	private void putBlock(Block block) {
+		if (isBlocked(block)) {
+			System.out.println("impossible move, blocked by another block");
+			System.exit(6);
 		} else {
-			Iterator<Board> movesIter = moves.iterator(); 
-			board1 = movesIter.next();
-			board2 = board1;
-			while (movesIter.hasNext()) {
-				board1 = board2;
-				board2 = movesIter.next();
-				System.out.println(getMove(board1, board2)); 
+			for (int a = block.getTopLeftRow(); a <= block.getBottomRightRow(); a++) {
+				for (int i = block.getTopLeftCol(); i <= block.getBottomRightCol(); i++) {
+					if (a >= myHeight || i > myWidth) {
+						System.out.println("move is out of bound");
+						System.exit(6);
+					} else {
+						board[a][i] = block.getBlock();
+					}
+				}
 			}
-			
-			System.exit(0);
+		}
+		blocks.add(block);
+	}
+	
+	private void removeBlock(Block block) {
+		int blockIndicator = block.getBlock();
+		for (int i = 0; i < myHeight; i++) {
+			for (int a = 0; a < myWidth; a++) {
+				if (board[i][a] == blockIndicator) {
+					board[i][a] = 0;
+				}
+			}
+		}
+		blocks.remove(block);
+	}
+	
+	public void makeMove(int[] oldSpot, int[] newSpot) { // changed from private to public
+		if (oldSpot[0] > myHeight - 1 || newSpot[0] > myHeight - 1 ||
+			oldSpot[1] > myWidth - 1 || newSpot[1] > myWidth - 1) {
+			System.out.println("move is out of bound");
+			System.exit(6);
+		}
+		int blockIndicator = board[oldSpot[0]][oldSpot[1]];
+		if (blockIndicator == 0) {
+			System.out.println("invalid input, unable to make move");
+			System.exit(6);
+		}
+		Block toBeRemoved = null;
+		Block toBeAdded;
+		ArrayList<Integer> toBeAddedCoors = new ArrayList<Integer>();
+		toBeAddedCoors.add(newSpot[0]);
+		toBeAddedCoors.add(newSpot[1]);
+		for (int i = 0; i < blocks.size(); i++) {
+			Block currBlock = blocks.get(i);
+			if (currBlock.getTopLeftRow() == oldSpot[0] && currBlock.getTopLeftCol() == oldSpot[1]) {
+				toBeRemoved = currBlock;
+			}
+		}
+		toBeAddedCoors.add(newSpot[0] + toBeRemoved.getDimension()[0] - 1);
+		toBeAddedCoors.add(newSpot[1] +toBeRemoved.getDimension()[1] - 1);
+		if (toBeAddedCoors.size() != 4) {
+			System.out.println("input is incorrectly formatted");
+			System.exit(5);
+		}
+		else {
+			toBeAdded = new Block(toBeAddedCoors, blockIndicator);
+			this.removeBlock(toBeRemoved);
+			this.putBlock(toBeAdded);
 		}
 	}
 	
-	public Board makeGoalBoard(String goalFile) {
-		try {
-			Board goalBoard = null;
-			File goal = new File(goalFile);
-			ArrayList<Block> goalBlocks = new ArrayList<Block>();
-			Scanner s = new Scanner(goal);
-			int i = 1;
-			ArrayList<Integer> boardNBlockHelper = new ArrayList<Integer>();
-			goalBoard = new Board(goalDimensions[0], goalDimensions[1]);
-			while (s.hasNext()) {
-				boardNBlockHelper.add(s.nextInt());
-				if (i % 4 == 0) {
-					if (boardNBlockHelper.size() != 4) {
-		
-						System.exit(4);
-					}
-					else {
-						Block blockToAdd = new Block(boardNBlockHelper, currentBlock);
-						currentBlock++;
-						goalBlocks.add(blockToAdd);
-						boardNBlockHelper.clear();
-					}
-				}
-				i++;
-				}
-				if (boardNBlockHelper.size() != 0) {
-					
-					System.exit(4);
-				}
-				
-			goalBoard.createBoard(goalBlocks, 4); 
-			s.close();
-			return goalBoard;
-		}
-		catch (FileNotFoundException e) {
 	
-			System.exit(4);
+	public void printBoard() {
+		for (int i = 0; i < myHeight; i++) {
+			for (int a = 0; a < myWidth; a++) {
+				int myBlock = board[i][a];
+				System.out.print(myBlock + " ");
+			}
+			System.out.println();
 		}
-		return null;
+	}
+	
+	public ArrayList<Block> getBlocks() {
+		return blocks;
+	}
+	
+	private boolean isLegalMove(Block old, int[] newSpot) {
+		int newRightCornerRow = old.getBottomRightRow() + (newSpot[0]-old.getTopLeftRow());
+		int newRightCornerCol = old.getBottomRightCol() + (newSpot[1]-old.getTopLeftCol());
+		try {
+			boolean legality = !((old.getTopLeftRow() > myHeight - 1 || newSpot[0] > myHeight - 1 ||
+				old.getTopLeftCol() > myWidth - 1 || newSpot[1] > myWidth - 1) || 
+				board[old.getTopLeftRow()][old.getTopLeftCol()] == 0 ||
+				(board[newSpot[0]][newSpot[1]] != 0 && 
+				(board[newRightCornerRow][newRightCornerCol] != 0 ||
+				board[newRightCornerRow][newRightCornerCol] != old.getBlockIndicator())
+				));
+			return legality;
+		} catch (ArrayIndexOutOfBoundsException e){
+			return false;
+		}
+	}
+	
+	public ArrayList<Board> generateMoves() {
+		ArrayList<Board> results = new ArrayList<Board>();
+		Board moveRight = new Board(myHeight, myWidth);
+		moveRight.createBoard(blocks, 4);
+		Board moveLeft = new Board(myHeight, myWidth);
+		moveLeft.createBoard(blocks, 4);
+		Board moveUp = new Board(myHeight, myWidth);
+		moveUp.createBoard(blocks, 4);
+		Board moveDown =new Board(myHeight, myWidth);
+		moveDown.createBoard(blocks, 4);
+		for (Block block : this.blocks) {
+			if (isBlocked(block)) {
+				continue;
+			} else {
+				Block curr = block;
+				int[] toMove = block.getTopLeftCoor();
+				int[] right = new int[2];
+				right[0] = toMove[0];
+				right[1] = toMove[1] + 1;
+				int[] left = new int[2];
+				left[0] = toMove[0];
+				left[1] = toMove[1] - 1;
+				int[] up = new int[2];
+				up[0] = toMove[0] - 1;
+				up[1] = toMove[1];
+				int[] down = new int[2];
+				down[0] = toMove[0] + 1;
+				down[1] = toMove[1];
+				
+				if (isLegalMove(curr, right)) {
+					moveRight.makeMove(toMove, right);
+					results.add(moveRight);
+				} 
+				if (isLegalMove(curr, left)) {
+					moveLeft.makeMove(toMove, left);
+					results.add(moveLeft);
+				} 
+				if (isLegalMove(curr, up)) {
+					moveUp.makeMove(toMove, up);
+					results.add(moveUp);
+				}
+				if (isLegalMove(curr, down)) {
+					moveDown.makeMove(toMove, down);
+					results.add(moveDown);
+				}					
+			}
+		}
+		return results;
+	}
+	
+	@Override
+	public boolean equals(Object otherBoard) {
+		Board other = (Board) otherBoard;
+		if (this.getBlocks().size() != other.getBlocks().size()) {
+			return false;
+		}
+		outerloop:
+		for (int i = 0; i < this.getBlocks().size(); i++) {
+			for (int j = 0; j < other.getBlocks().size(); j++) {
+				if (this.getBlocks().get(i).equals(other.getBlocks().get(j)) && !other.getBlocks().get(i).getEqualsMark()) {
+					other.getBlocks().get(i).setEqualsMark(true);
+					this.getBlocks().get(i).setEqualsMark(true);		
+					continue outerloop;
+				}
+			}
+		}
+		for (int i = 0; i < this.getBlocks().size(); i++) {
+			if (!this.getBlocks().get(i).getEqualsMark() || !other.getBlocks().get(i).getEqualsMark()) {
+				return false;
+			}
+		}
+		for (int i = 0; i < other.getBlocks().size(); i++) {
+			other.getBlocks().get(i).setEqualsMark(false);
+			this.getBlocks().get(i).setEqualsMark(false);
+		}
+		return true;
+	}	
+	
+	public boolean equalsToGoal(Object otherBoard) {
+		Board goal = (Board) otherBoard;
+		for (int i = 0; i < goal.getBlocks().size(); i++) {
+			if (this.getBlock(goal.getBlocks().get(i).getTopLeftCoor()) == null) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
