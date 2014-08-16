@@ -95,7 +95,7 @@ public class Solver {
 		while (!navigableBoards.isEmpty()) {
 			currBoard = navigableBoards.pop();
 			if (debugging) {
-				System.out.println(navigableBoards.size());
+				System.out.println(navigableBoards.size());	
 			}
 			if (currBoard.equalsToGoal(goal)) {	
 				//System.out.println("Got to the goal");
@@ -113,14 +113,14 @@ public class Solver {
 					}
 					continue;
 				} else {
-						if (!visitedBoards.contains(move)) {
+						
 						boardMap.put(move, currBoard);					
 						visitedBoards.add(move);
 						navigableBoards.push(move);
 						if (debugging) {
 							System.out.println("This move is being added to the stack");
 							move.printBoard();
-						}
+						
 					}
 				}
 			}
