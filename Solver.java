@@ -91,7 +91,7 @@ public class Solver {
 		
 		navigableBoards.push(initial);
 		visitedBoards.add(initial);
-		/
+		
 		while (!navigableBoards.isEmpty()) {
 			currBoard = navigableBoards.pop();
 			
