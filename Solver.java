@@ -91,28 +91,38 @@ public class Solver {
 		
 		navigableBoards.push(initial);
 		visitedBoards.add(initial);
-		
+		//ListIterator<Board> navIterator = navigableBoards.listIterator();
 		while (!navigableBoards.isEmpty()) {
 			currBoard = navigableBoards.pop();
-			
+			if (debugging) {
+				System.out.println(navigableBoards.size());
+			}
 			if (currBoard.equalsToGoal(goal)) {	
-				
+				//System.out.println("Got to the goal");
 				return buildPath(currBoard);
 			}
-		
+			//navIterator.remove();
+			//navigableBoards.remove(currBoard);
 			visitedBoards.add(currBoard);
 			for (Board move : currBoard.generateMoves()) {
 				if (visitedBoards.contains(move)) {
+					if (debugging) {
+						System.out.println("These moves have already been visited");
+						move.printBoard();
+						System.out.println("done");
+					}
 					continue;
 				} else {
-					if (!visitedBoards.contains(move)) {
+						if (!visitedBoards.contains(move)) {
 						boardMap.put(move, currBoard);					
 						visitedBoards.add(move);
 						navigableBoards.push(move);
-	
+						if (debugging) {
+							System.out.println("This move is being added to the stack");
+							move.printBoard();
+						}
 					}
 				}
-
 			}
 		}
 		return null;
@@ -133,7 +143,10 @@ public class Solver {
 	public static String getMove(Board before, Board after) {
 		StringBuilder move = new StringBuilder();
 		if (before.equalsToGoal(after)) {
-			System.out.println(0);
+			if (debugging) {
+				System.out.println("Success!");
+			}
+			System.exit(0);
 		}
 		mainLoop:
 		for (Block a : before.getBlocks()) {
@@ -156,7 +169,7 @@ public class Solver {
 		Board board2;
 		if (moves == null) {
 			if (debugging) {
-				System.out.println("1");
+				System.out.println("1hi");
 			}
 			System.exit(1);
 		} else if (moves.size() == 1) {
