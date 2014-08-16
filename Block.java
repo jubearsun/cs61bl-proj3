@@ -8,15 +8,16 @@ public class Block {
 	private int[] bottomRightCoor = new int[2];
 	private int blockIndicator; //number that helps distinct one block from another.
 	private int[] dimension = new int[2]; 
-	private boolean equalsMark = false; // used in determining if two boards are equal
 	
 	public Block (ArrayList<Integer> myCoors, int myBlockInd) {
+	//	System.out.println(myCoors.toString());
 		blockIndicator = myBlockInd;
-		topLeftCoor[0] = myCoors.get(0);
-		topLeftCoor[1] = myCoors.get(1);
-		bottomRightCoor[0] = myCoors.get(2);
-		bottomRightCoor[1] = myCoors.get(3);
-		makeDimension(myCoors);	
+		
+			topLeftCoor[0] = myCoors.get(0);
+			topLeftCoor[1] = myCoors.get(1);
+			bottomRightCoor[0] = myCoors.get(2);
+			bottomRightCoor[1] = myCoors.get(3);
+			makeDimension(myCoors);	
 	}
 	
 	public void makeDimension(ArrayList<Integer> myCoors) {
@@ -58,14 +59,6 @@ public class Block {
 	
 	public int getBlockIndicator() {
 		return blockIndicator;
-	}
-	
-	public boolean getEqualsMark() {
-		return equalsMark;
-	}
-	
-	public void setEqualsMark(boolean x) {
-		this.equalsMark = x;
 	}
 	
 	public boolean equals(Block other) {
