@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Board {
 	private int[][] board;
@@ -26,7 +27,9 @@ public class Board {
 	public void createBoard(ArrayList<Block> myBlocks, int print) { 
 		for (int i = 0; i < myBlocks.size(); i ++) {
 			Block currBlock = myBlocks.get(i);
-			if (isBlocked(currBlock)) {
+			int[] myTopLeft = new int[2];
+			myTopLeft = currBlock.getTopLeftCoor();
+			if (isBlocked(currBlock, myTopLeft)) {
 				System.out.println("unable to make board due to invalid format");
 				System.exit(print);
 			} else {
@@ -35,10 +38,20 @@ public class Board {
 		}
 	}
 	
-	private boolean isBlocked(Block block) {
-		for (int a = block.getBottomRightRow(); a <= block.getTopLeftRow(); a++) {
-			for (int i = block.getTopLeftCol(); i <= block.getBottomRightCol(); i++) {
-				if (board[a][i] != 0) {
+	private boolean isBlocked(Block block, int[] newSpot) {
+		int[] myDimension = block.getDimension();
+		ArrayList<Integer> myCoors = new ArrayList<Integer>();
+		myCoors.add(newSpot[0]);
+		myCoors.add(newSpot[1]);
+		myCoors.add(myDimension[0] - 1 + block.getTopLeftRow());
+		myCoors.add(myDimension[1] - 1 + block.getTopLeftCol());
+		Block newBlock = new Block(myCoors, block.getBlock());
+		for (int a = newBlock.getBottomRightRow(); a <= newBlock.getTopLeftRow(); a++) {
+			for (int i = newBlock.getTopLeftCol(); i <= newBlock.getBottomRightCol(); i++) {
+				if (a > myHeight - 1 || i > myWidth - 1) {
+					return true;
+				}
+				if (board[a][i] != 0 && board[a][i] != newBlock.getBlock()) {
 					return true;
 				}
 			}
@@ -47,7 +60,9 @@ public class Board {
 	}
 	
 	private void putBlock(Block block) {
-		if (isBlocked(block)) {
+		int[] myTopLeft = new int[2];
+		myTopLeft = block.getTopLeftCoor();
+		if (isBlocked(block, myTopLeft)) {
 			System.out.println("impossible move, blocked by another block");
 			System.exit(6);
 		} else {
@@ -85,7 +100,7 @@ public class Board {
 		}
 		int blockIndicator = board[oldSpot[0]][oldSpot[1]];
 		if (blockIndicator == 0) {
-			System.out.println("invalid input, unable to make move");
+			System.out.println("invalid input, block does not exists");
 			System.exit(6);
 		}
 		Block toBeRemoved = null;
@@ -171,9 +186,6 @@ public class Board {
 		Board moveDown =new Board(myHeight, myWidth);
 		moveDown.createBoard(blocks, 4);
 		for (Block block : this.blocks) {
-			if (isBlocked(block)) {
-				continue;
-			} else {
 				Block curr = block;
 				int[] toMove = block.getTopLeftCoor();
 				int[] right = new int[2];
@@ -205,7 +217,6 @@ public class Board {
 					moveDown.makeMove(toMove, down);
 					results.add(moveDown);
 				}					
-			}
 		}
 		return results;
 	}
