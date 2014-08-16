@@ -5,7 +5,7 @@ public class Board {
 	private int myHeight;
 	private int myWidth;
 	private ArrayList<Block> blocks;
-	private static boolean debugging = false;
+	private static boolean debugging = true;
 	
 	public Board(int height,int width) {
 		blocks = new ArrayList<Block>();
@@ -252,41 +252,47 @@ public class Board {
 	@Override
 	public boolean equals(Object otherBoard) {
 		Board other = (Board) otherBoard;
+		boolean check = false;
 		if (this.getBlocks().size() != other.getBlocks().size()) {
 			return false;
 		}
-		outerloop:
 		for (int i = 0; i < this.getBlocks().size(); i++) {
+			check = false;
 			for (int j = 0; j < other.getBlocks().size(); j++) {
-				if (this.getBlocks().get(i).equals(other.getBlocks().get(j)) && !other.getBlocks().get(j).getEqualsMark()) {
-					other.getBlocks().get(j).setEqualsMark(true);
-					this.getBlocks().get(i).setEqualsMark(true);		
-					continue outerloop;
+				if (this.getBlocks().get(i).equals(other.getBlocks().get(j))) {		
+					check = true;
 				}
 			}
-		}
-		for (int i = 0; i < this.getBlocks().size(); i++) {
-			if (!this.getBlocks().get(i).getEqualsMark() || !other.getBlocks().get(i).getEqualsMark()) {
+			if (!check) {
 				return false;
 			}
-		}
-		for (int i = 0; i < other.getBlocks().size(); i++) {
-			other.getBlocks().get(i).setEqualsMark(false);
-			this.getBlocks().get(i).setEqualsMark(false);
 		}
 		return true;
 	}	
 	
 	public boolean equalsToGoal(Object otherBoard) {
-		if (otherBoard.equals(this)) {
-			return true;
-		}
 		Board goal = (Board) otherBoard;
-		for (int i = 0; i < goal.getBlocks().size(); i++) {
-			if (this.getBlock(goal.getBlocks().get(i).getTopLeftCoor()) == null) {
-				return false;
+		int blocksMatchedSoFar = 0;
+		ArrayList<Block> myBlocks = this.getBlocks();
+		for (Block b: goal.getBlocks()) {
+			for (Block checker: myBlocks) {
+				if (checker.equals(b)) {
+					blocksMatchedSoFar++;
+					break;
+				}
 			}
 		}
-		return true;
+		if (goal.getBlocks().size() == blocksMatchedSoFar) {
+			return true;
+		} else {
+			return false;
+		}
 	}
+//		
+//		for (int i = 0; i < goal.getBlocks().size(); i++) {
+//			if (this.getBlock(goal.getBlocks().get(i).getTopLeftCoor()) == null) {
+//				return false;
+//			}
+//		}
+//		return true;
 }
