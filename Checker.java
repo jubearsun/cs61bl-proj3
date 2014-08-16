@@ -1,12 +1,9 @@
 
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-
-
 
 public class Checker {
 	
@@ -20,7 +17,6 @@ public class Checker {
 			System.exit(2);
 		}
 		Checker init = new Checker(args[0]);
-		//init.printBoard();
 		ArrayList<Block> goalBlocks = init.makeGoalBlocks(args[1]);
 		int[] oldSpot = new int[2];
 		int[] newSpot = new int[2];
@@ -32,7 +28,6 @@ public class Checker {
 				newSpot[0] = s.nextInt();
 				newSpot[1] = s.nextInt();
 				init.makeMove(oldSpot, newSpot);
-				//init.printBoard();
 			}
 			catch (NoSuchElementException e) {
 				System.out.println("Invalid input, needs 4 integers seperated by spaces");
@@ -40,6 +35,7 @@ public class Checker {
 			}
 		}
 		init.CheckGoal(goalBlocks);
+		s.close();
 	}
 	
 	public Checker(String init) {
@@ -69,6 +65,7 @@ public class Checker {
 				}
 				i++;
 			}
+			s.close();
 			if (boardNBlockHelper.size() != 0) {
 				System.out.println("init file is incorrectly formatted");
 				System.exit(5);
@@ -119,11 +116,12 @@ public class Checker {
 				System.out.println("goal file is incorrectly formatted");
 				System.exit(5);
 			}
+			gBlocks.close();
 		}
 		catch (FileNotFoundException e) {
 			System.out.println("No such file found");
 			System.exit(3);
-		}
+		}	
 		return rtnBlocks;
 	}
 	
