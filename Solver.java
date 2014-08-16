@@ -19,7 +19,7 @@ public class Solver {
 	private Board myBoard;
 	private ArrayList<Block> myBlocks;
 	private int currentBlock = 1; 
-	public static boolean debugging = true;
+	public static boolean debugging = false;
 	
 	public static void main(String [] args) throws FileNotFoundException {
 		if (args.length != 2) {
@@ -91,16 +91,15 @@ public class Solver {
 		
 		navigableBoards.push(initial);
 		visitedBoards.add(initial);
-		//ListIterator<Board> navIterator = navigableBoards.listIterator();
+		/
 		while (!navigableBoards.isEmpty()) {
 			currBoard = navigableBoards.pop();
 			
 			if (currBoard.equalsToGoal(goal)) {	
-				//System.out.println("Got to the goal");
+				
 				return buildPath(currBoard);
 			}
-			//navIterator.remove();
-			//navigableBoards.remove(currBoard);
+		
 			visitedBoards.add(currBoard);
 			for (Board move : currBoard.generateMoves()) {
 				if (visitedBoards.contains(move)) {
@@ -134,7 +133,7 @@ public class Solver {
 	public static String getMove(Board before, Board after) {
 		StringBuilder move = new StringBuilder();
 		if (before.equalsToGoal(after)) {
-			return "0 0 0 0"; //not sure what should be returned if no moves are necessary
+			System.out.println(0);
 		}
 		mainLoop:
 		for (Block a : before.getBlocks()) {
